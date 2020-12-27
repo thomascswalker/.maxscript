@@ -1,1 +1,1 @@
-RInclude @"..\test\testFile.ms"
+rFileIn @"..\test\testFile.ms"
