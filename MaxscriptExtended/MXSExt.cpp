@@ -15,14 +15,14 @@
 #include "MXSExt_pch.h"
 #include "MXSExt.h"
 #include "resource.h"
-#include "maxscript/maxscriptFunctions.h"
+#include "maxscript/mxsfunctions.h"
 
 #define MXSExtUtilClassDesc_CLASS_ID	Class_ID(0x75723824, 0x68792b2a)
 
 // Define Maxscript functions
 #include <maxscript\macros\define_instantiation_functions.h>
-	def_visible_primitive(rFileIn, "rFileIn");
-	def_visible_primitive(readJson, "readJson");
+	def_visible_primitive(rFileIn, "RFileIn");
+	def_visible_primitive(readJson, "ReadJson");
 
 ClassDesc2* GetMXSExtUtilClassDesc() {
 	static MXSExtUtilClassDesc MXSExtUtilDesc;

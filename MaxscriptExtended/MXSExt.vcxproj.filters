@@ -35,6 +35,9 @@
     <ClInclude Include="MXSExt_pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="maxscript\mxsfunctions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="MXSExt.def">
