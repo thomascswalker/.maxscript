@@ -1,4 +1,5 @@
 #include <maxscript\macros\define_instantiation_functions.h>
+#include <helpers.h>
 
 // Define custom maxscript argument names
 #define n_pretty (Name::intern( _T("pretty")))
@@ -23,23 +24,9 @@ Value* rFileIn_cf(Value **arg_list, int count)
 	{
 		throw RuntimeError(_T("Expected a string for the first argument, in function RFileIn."));
 	}
-	MaxSDK::Util::Path fileInPath = pFilename->to_string();
 
-	MAXScript_TLS* _tls = (MAXScript_TLS*)TlsGetValue(thread_locals_index);
-	if (fileInPath.StartsWithUpDirectory() && _tls && _tls->source_file)
-	{
-		fileInPath.Normalize();
-
-		// Strip filepath of leaves, add backslash, convert to absolute
-		fileInPath = _tls->source_file->to_string();
-		fileInPath.RemoveLeaf();
-		fileInPath.AddTrailingBackslash();
-		fileInPath.Append(arg_list[0]->to_string());
-		fileInPath.Normalize();
-	}
-
-	// Macro for running the MAXScript function 'fileIn'
-	filein_script(fileInPath.GetCStr());
+	// Convert relative filename to absolute filename
+	filein_script(ToAbsFilename(pFilename).GetCStr());
 
 	// Generic return
 	return &ok;

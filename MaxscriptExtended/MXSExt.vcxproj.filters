@@ -38,6 +38,9 @@
     <ClInclude Include="maxscript\mxsfunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="helpers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="MXSExt.def">
