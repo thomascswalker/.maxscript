@@ -1,4 +1,7 @@
-#pragma once
+#include <maxscript\macros\define_instantiation_functions.h>
+
+// Define custom maxscript argument names
+#define n_pretty (Name::intern( _T("pretty")))
 
 /**
  * Extends the standard 'fileIn' MAXScript function to support
@@ -9,7 +12,7 @@
  */
 Value* rFileIn_cf(Value **arg_list, int count)
 {
-	// <ok> relFileIn <FileName:String>
+	// <ok> rFileIn <FileName:String>
 	check_arg_count(rFileIn, 1, count);
 	
 	// Get the current script filepath that's being run
@@ -47,14 +50,23 @@ Value* rFileIn_cf(Value **arg_list, int count)
  * or with indents.
  *
  * @param arg_list The function arguments.
+ * @param pretty Whether to format the returned string with indents (true)
+ *               or not (false).
  * @returns MAXValueString The contents of the .json file.
  */
 Value* readJson_cf(Value **arg_list, int count)
 {
-	check_arg_count(readJson, 1, count);
+	check_arg_count_with_keys(readJson, 1, count);
 
-	// Get the arguments
+	// Get the filename argument
 	Value* pFilename = arg_list[0];
+
+	// Get the optional 'pretty' argument, defining the QJsonDocument formatting style
+	// Pretty:true = Indented
+	// Pretty:false = Compact
+	Value* tmp;
+	BOOL pPretty = bool_key_arg(pretty, tmp, false);
+	QJsonDocument::JsonFormat format = pPretty ? QJsonDocument::Indented : QJsonDocument::Compact;
 
 	// Check to see if the filename arg is a string
 	if (!(is_string(pFilename)))
@@ -74,7 +86,7 @@ Value* readJson_cf(Value **arg_list, int count)
 
 	// Convert the JSON format to a string
 	QJsonDocument doc = QJsonDocument::fromJson(contents.toUtf8());
-	QString docStr = QString::fromStdString(doc.toJson(QJsonDocument::Indented).toStdString());
+	QString docStr = QString::fromStdString(doc.toJson(format).toStdString());
 
 	// Convert the output string the a Max value type
 	MAXScript_TLS* _tls = (MAXScript_TLS*)TlsGetValue(thread_locals_index);
