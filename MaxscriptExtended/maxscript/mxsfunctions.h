@@ -62,7 +62,9 @@ Value* readJson_cf(Value **arg_list, int count)
 	}
 
 	// Get the filename from the first argument
-	QString filename = QString::fromStdWString(pFilename->to_string());
+	// Also supports relative file pathing
+	const wchar_t* absFilename = ToAbsFilename(pFilename).GetCStr();
+	QString filename = QString::fromStdWString(absFilename);
 
 	// Read the .json file
 	QFile file;
