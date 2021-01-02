@@ -1,4 +1,8 @@
+#include <maxscript\kernel\value.h>
+#include <maxscript\foundation\MXSDictionaryValue.h>
+#include <maxscript\foundation\DataPair.h>
 #include <maxscript\macros\define_instantiation_functions.h>
+#include <maxscript\macros\define_implementations.h>
 #include <helpers.h>
 
 // Define custom maxscript argument names
@@ -74,14 +78,56 @@ Value* readJson_cf(Value **arg_list, int count)
 	file.close();
 
 	// Convert the JSON format to a string
-	QJsonDocument doc = QJsonDocument::fromJson(contents.toUtf8());
-	QString docStr = QString::fromStdString(doc.toJson(format).toStdString());
+	QJsonDocument jsonDoc = QJsonDocument::fromJson(contents.toUtf8());
+	if (jsonDoc.isNull() | !jsonDoc.isObject())
+	{
+		throw RuntimeError(_T("Failed to read .json file."));
+	}
 
-	// Convert the output string the a Max value type
+	// Get the JSON object
+	QJsonObject jsonObj = jsonDoc.object();
+	if (jsonObj.isEmpty())
+	{
+		throw RuntimeError(_T("QJSONObject is empty."));
+	}
+
+	// Convert the JSON dictionary to a mapped QVariant, effectively
+	// a Qt Dictionary
+	QVariantHash jsonMap = jsonObj.toVariantHash();
+	MXSDictionaryValue jsonMxsDict = MXSDictionaryValue(MXSDictionaryValue::key_type::key_string);
+
+	QList<QString> keys = jsonMap.keys();
+	//while ()
+
+	//QHash::const_iterator i = jsonMap.constBegin();
+	//Value* jsonMapValue = Value::to_bitarray(jsonMap.keys());
+	//to_bitarray(jsonMap.keys());
+	//jsonMxsDict.set_keys(jsonMap.keys(), 1);
+
 	MAXScript_TLS* _tls = (MAXScript_TLS*)TlsGetValue(thread_locals_index);
-	one_typed_value_local_tls(String* rString);
-	vl.rString = new String(docStr);
+	one_typed_value_local_tls(MXSDictionaryValue* rDict);
+	vl.rDict = new MXSDictionaryValue(MXSDictionaryValue::key_type::key_string);
 
-	// Return the Max value string
-	return_value_tls(vl.rString);
+	// Here is where we copy the QJsonMap/Hash to the MXS Dictionary value
+	Value* key = new String(_T("testKey"));
+	Value* value = new String(_T("testValue"));
+
+	vl.rDict->put(key, value);
+
+	// Return the dictionary
+	return_value_tls(vl.rDict);
+
+
+	//// deep copy hash table from qvarianthash?
+
+	//QString jsonStr = QString::fromStdString(jsonDoc.toJson(format).toStdString());
+
+	//// Convert the output string the a Max value type
+
+	//MAXScript_TLS* _tls = (MAXScript_TLS*)TlsGetValue(thread_locals_index);
+	//one_typed_value_local_tls(String* rString);
+	//vl.rString = new String(jsonStr);
+
+	//// Return the Max value string
+	//return_value_tls(vl.rString);
 }

@@ -99,6 +99,10 @@ BEGIN_QT_HEADERS
 #include <QVector>
 #include <QWidget>
 #include <QJsonDocument>
+#include <QJsonObject>
+#include <QVariant>
+#include <QHash>
+#include <QHashFunctions>
 END_QT_HEADERS
 
 // Universal helper functions
