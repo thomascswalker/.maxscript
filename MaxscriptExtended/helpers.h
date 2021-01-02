@@ -1,5 +1,7 @@
 #pragma once
-#include <maxscript/foundation/MXSDictionaryValue.h>
+
+#include <stdlib.h>
+#include <string>
 
 using namespace MaxSDK::Util;
 
@@ -24,18 +26,44 @@ Path ToAbsFilename(Value* pFilename)
 	return filename;
 }
 
-MXSDictionaryValue* QJsonToMxsDict(QVariantMap* jsonMap, MXSDictionaryValue* mxsDict)
+void QJsonToMxsDict(const QVariantMap& jsonMap, MXSDictionaryValue* mxsDict)
 {
-	QList<QString> keys = jsonMap->keys();
+	// Get all the keys in the current level
+	QList<QString> keys = jsonMap.keys();
 
-	foreach(QString key, keys)
+	// For each key...
+	for (QString key : keys)
 	{
-		// Here is where we copy the QJsonMap/Hash to the MXS Dictionary value
+		// We'll create the holder variables for the data
+		// key : value pair
 		Value* pairKey = new String(key);
-		Value* pairValue = new String(key);
+		Value* pairValue = nullptr;
+
+		// Now we'll get the type of Q variable the variant
+		// is, then convert the corresponding variable
+		// to its MAXScript type synonym
+		QVariant curValue = jsonMap.value(key);
+		switch (curValue.type())
+		{
+			case (QMetaType::QString):
+				pairValue = new String(curValue.toString());
+				break;
+			case (QMetaType::Bool):
+				curValue.toBool() ? pairValue = &true_value : pairValue = &false_value;
+				break;
+			case (QMetaType::Int):
+				pairValue = new Integer(curValue.toInt());
+				break;
+			case (QMetaType::QStringList):
+				//QList<QVariant> curList = curValue.toList();
+				break;
+			case (QMetaType::QVariantMap):
+				QJsonToMxsDict(curValue.toMap(), mxsDict);
+				break;
+		}
 		
+		// Finally we'll use the 'put' function to add the key
+		// value pair to the dictionary
 		mxsDict->put(pairKey, pairValue);
 	}
-
-	return mxsDict;
 }
