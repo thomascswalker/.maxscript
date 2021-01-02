@@ -1,4 +1,5 @@
 #pragma once
+#include <maxscript/foundation/MXSDictionaryValue.h>
 
 using namespace MaxSDK::Util;
 
@@ -21,4 +22,20 @@ Path ToAbsFilename(Value* pFilename)
 	}
 
 	return filename;
+}
+
+MXSDictionaryValue* QJsonToMxsDict(QVariantMap* jsonMap, MXSDictionaryValue* mxsDict)
+{
+	QList<QString> keys = jsonMap->keys();
+
+	foreach(QString key, keys)
+	{
+		// Here is where we copy the QJsonMap/Hash to the MXS Dictionary value
+		Value* pairKey = new String(key);
+		Value* pairValue = new String(key);
+		
+		mxsDict->put(pairKey, pairValue);
+	}
+
+	return mxsDict;
 }
