@@ -45,22 +45,30 @@ void QJsonToMxsDict(const QVariantMap& jsonMap, MXSDictionaryValue* mxsDict)
 		QVariant curValue = jsonMap.value(key);
 		switch (curValue.type())
 		{
+			// Strings
 			case (QMetaType::QString):
 				pairValue = new String(curValue.toString());
 				break;
+			// Booleans
 			case (QMetaType::Bool):
 				curValue.toBool() ? pairValue = &true_value : pairValue = &false_value;
 				break;
+			// Integers
 			case (QMetaType::Int):
 				pairValue = new Integer(curValue.toInt());
 				break;
+			// Arrays
 			case (QMetaType::QStringList):
 				//QList<QVariant> curList = curValue.toList();
 				break;
+			// Dictionaries
 			case (QMetaType::QVariantMap):
 				QJsonToMxsDict(curValue.toMap(), mxsDict);
 				break;
 		}
+
+		// Forcibly override (for now) because the above switch/case produces a broken result.
+		pairValue = new String(curValue.toString());
 		
 		// Finally we'll use the 'put' function to add the key
 		// value pair to the dictionary
