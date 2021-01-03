@@ -74,6 +74,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="helpers.cpp" />
     <ClCompile Include="MXSExt.cpp" />
     <ClCompile Include="DllEntry.cpp" />
     <ClCompile Include="MXSExt_pch.cpp">
@@ -81,6 +82,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Hybrid|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="mxsfunctions.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MXSExt.def" />

@@ -38,14 +38,26 @@
 #include <thread>
 #include <sstream>
 #include <vector>
+#include <string>
+#include <stdlib.h>
+
 
 // 3ds Max Headers
 #pragma warning(push)  
 #pragma warning(disable : 4702)
+#include <maxscript\kernel\value.h>
+#include <maxscript\foundation\arrays.h>
+#include <maxscript\foundation\strings.h>
 #include <maxscript/foundation/numbers.h>
+#include <maxscript\foundation\MXSDictionaryValue.h>
+#include <maxscript\foundation\DataPair.h>
 #include <maxscript/macros/generic_class.h>
 #include <maxscript/maxwrapper/mxsobjects.h>
 #include <maxscript/maxscript.h>
+
+#include <maxscript\macros\define_instantiation_functions.h>
+#include <maxscript\macros\define_implementations.h>
+
 #pragma warning(pop)
 
 #include <Qt/QmaxDockWidget.h>
