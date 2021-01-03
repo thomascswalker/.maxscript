@@ -38,45 +38,42 @@ Value* QVariantToMxsValue(const QVariant& variant)
 
 	switch (variant.type())
 	{
-	// Strings
-	case (QMetaType::QString):
-		qInfo() << "QString found.";
-		mxsValue = new String(variant.toString());
-		break;
-	// Booleans
-	case (QMetaType::Bool):
-		qInfo() << "QBool found.";
-		variant.toBool() ? mxsValue = &true_value : mxsValue = &false_value;
-		break;
-	// Integers (doubles)
-	case (QMetaType::Double):
-		qInfo() << "QDouble found.";
-		mxsValue = new Integer(variant.toInt());
-		break;
-	// Arrays
-	case (QMetaType::QStringList):
-	{
-		qInfo() << "QStringList found.";
-		mxsValue = QVariantListToMxsArray(variant.toList());
-		break;
-	}
-	// Dictionaries
-	case (QMetaType::QVariantMap):
-	{
-		qInfo() << "QVariantMap found.";
-		mxsValue = QVariantMapToMxsDict(variant.toMap());
-		break;
-	}
-	// Default to a string if it can't be resolved
-	// to a MAXScript value type
-	default:
-		break;
+		// Strings
+		default:
+		case (QMetaType::QString):
+			mxsValue = new String(variant.toString());
+			break;
+		// Booleans
+		case (QMetaType::Bool):
+			variant.toBool() ? mxsValue = &true_value : mxsValue = &false_value;
+			break;
+		// Integers (doubles)
+		case (QMetaType::Int):
+		case (QMetaType::Double):
+			mxsValue = new Integer(variant.toInt());
+			break;
+		// Floats
+		case (QMetaType::Float):
+			mxsValue = new Float(variant.toFloat());
+			break;
+		// Arrays
+		case (QMetaType::QVariantList):
+		{
+			mxsValue = QVariantListToMxsArray(variant.toList());
+			break;
+		}
+		// Dictionaries
+		case (QMetaType::QVariantMap):
+		{
+			mxsValue = QVariantMapToMxsDict(variant.toMap());
+			break;
+		}
 	}
 
 	return mxsValue;
 }
 
-// Dict to dict mapper
+// JSON associative array to MAXScript Dictionary mapper
 Value* QVariantMapToMxsDict(const QVariantMap& variantMap)
 {
 	MXSDictionaryValue *mxsDict = new MXSDictionaryValue(MXSDictionaryValue::key_type::key_string);
@@ -106,10 +103,10 @@ Value* QVariantMapToMxsDict(const QVariantMap& variantMap)
 	return mxsDict;
 }
 
-// List to array mapper
+// JSON list to MAXScript Array mapper
 Value* QVariantListToMxsArray(const QVariantList& variantList)
 {
-	Array *mxsArray = new Array(variantList.count());
+	Array *mxsArray = new Array(0);
 	for (QVariant variant : variantList)
 	{
 		Value* mxsValue = QVariantToMxsValue(variant);
