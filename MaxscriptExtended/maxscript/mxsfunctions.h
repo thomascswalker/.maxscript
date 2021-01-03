@@ -93,12 +93,11 @@ Value* readJson_cf(Value **arg_list, int count)
 
 	// Convert the JSON dictionary to a mapped QVariant, effectively
 	// a Qt Dictionary
-	const QVariantMap jsonMap = jsonObj.toVariantMap();
-	MXSDictionaryValue* jsonMxsDict = new MXSDictionaryValue(MXSDictionaryValue::key_type::key_string);
+	const QVariantMap variantMap = jsonObj.toVariantMap();
 
 	// Convert the QVariantMap to a MAXScript Dictionary value
-	QJsonToMxsDict(jsonMap, jsonMxsDict);
+	Value* mxsDict = QVariantMapToMxsDict(variantMap);
 
 	// Return the dictionary
-	return jsonMxsDict;
+	return mxsDict;
 }

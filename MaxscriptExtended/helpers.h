@@ -2,6 +2,12 @@
 
 #include <stdlib.h>
 #include <string>
+#include <maxscript\foundation\arrays.h>
+#include <qdebug.h>
+
+Value* QVariantToMxsValue(const QVariant& variant);
+Value* QVariantMapToMxsDict(const QVariantMap& variantMap);
+Value* QVariantListToMxsArray(const QVariantList& variantList);
 
 using namespace MaxSDK::Util;
 
@@ -26,10 +32,57 @@ Path ToAbsFilename(Value* pFilename)
     return filename;
 }
 
-void QJsonToMxsDict(const QVariantMap& jsonMap, MXSDictionaryValue* mxsDict)
+Value* QVariantToMxsValue(const QVariant& variant)
 {
+	Value* mxsValue = nullptr;
+
+	switch (variant.type())
+	{
+	// Strings
+	case (QMetaType::QString):
+		qInfo() << "QString found.";
+		mxsValue = new String(variant.toString());
+		break;
+	// Booleans
+	case (QMetaType::Bool):
+		qInfo() << "QBool found.";
+		variant.toBool() ? mxsValue = &true_value : mxsValue = &false_value;
+		break;
+	// Integers (doubles)
+	case (QMetaType::Double):
+		qInfo() << "QDouble found.";
+		mxsValue = new Integer(variant.toInt());
+		break;
+	// Arrays
+	case (QMetaType::QStringList):
+	{
+		qInfo() << "QStringList found.";
+		mxsValue = QVariantListToMxsArray(variant.toList());
+		break;
+	}
+	// Dictionaries
+	case (QMetaType::QVariantMap):
+	{
+		qInfo() << "QVariantMap found.";
+		mxsValue = QVariantMapToMxsDict(variant.toMap());
+		break;
+	}
+	// Default to a string if it can't be resolved
+	// to a MAXScript value type
+	default:
+		break;
+	}
+
+	return mxsValue;
+}
+
+// Dict to dict mapper
+Value* QVariantMapToMxsDict(const QVariantMap& variantMap)
+{
+	MXSDictionaryValue *mxsDict = new MXSDictionaryValue(MXSDictionaryValue::key_type::key_string);
+
     // Get all the keys in the current level
-    QList<QString> keys = jsonMap.keys();
+    QList<QString> keys = variantMap.keys();
 
     // For each key...
     for (QString key : keys)
@@ -37,47 +90,31 @@ void QJsonToMxsDict(const QVariantMap& jsonMap, MXSDictionaryValue* mxsDict)
         // We'll create the holder variables for the data
         // key : value pair
         Value* pairKey = new String(key);
-        Value* pairValue = nullptr;
 
         // Now we'll get the type of Q variable the variant
         // is, then convert the corresponding variable
         // to its MAXScript type synonym
-        QVariant curValue = jsonMap.value(key);
-        switch (curValue.type())
-        {
-            // Strings
-            case (QMetaType::QString):
-                pairValue = new String(curValue.toString());
-                mxsDict->put(pairKey, pairValue);
-                break;
-            // Booleans
-            case (QMetaType::Bool):
-                curValue.toBool() ? pairValue = &true_value : pairValue = &false_value;
-                mxsDict->put(pairKey, pairValue);
-                break;
-            // Integers
-            case (QMetaType::Int):
-                pairValue = new Integer(curValue.toInt());
-                mxsDict->put(pairKey, pairValue);
-                break;
-            // Arrays
-            case (QMetaType::QStringList):
-                //QList<QVariant> curList = curValue.toList();
-                break;
-            // Dictionaries
-            case (QMetaType::QVariantMap):
-                {
-                    MXSDictionaryValue *nestDict = new MXSDictionaryValue(MXSDictionaryValue::key_type::key_string);
-                    QJsonToMxsDict(curValue.toMap(), nestDict);
-                    mxsDict->put(pairKey, nestDict);
-                    break;
-                }
-            // Default to a string if it can't be resolved
-            // to a MAXScript value type
-            default:
-                pairValue = new String(curValue.toString());
-                mxsDict->put(pairKey, pairValue);
-                break;
-        }
+        QVariant curValue = variantMap.value(key);
+		Value* mxsValue = QVariantToMxsValue(curValue);
+
+		if (mxsValue)
+		{
+			mxsDict->put(pairKey, mxsValue);
+		}
     }
+
+	return mxsDict;
+}
+
+// List to array mapper
+Value* QVariantListToMxsArray(const QVariantList& variantList)
+{
+	Array *mxsArray = new Array(variantList.count());
+	for (QVariant variant : variantList)
+	{
+		Value* mxsValue = QVariantToMxsValue(variant);
+		mxsArray->append(mxsValue);
+	}
+
+	return mxsArray;
 }

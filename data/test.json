@@ -1,9 +1,14 @@
 {
-	"key1" : "stringValue1",
-	"key2" : 5,
-	"key3" : false,
-	"key4" : {
+	"string" : "stringValue1",
+	"double" : 5,
+	"bool" : false,
+	"dict" : {
 		"nestedKey1" : "stringValue2",
 		"nestedKey2" : "stringValue3"
-	}
+	},
+	"array" : [
+		"listItem1",
+		"listItem2",
+		"listItem3"
+	]
 }
