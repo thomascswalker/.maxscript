@@ -43,3 +43,6 @@ MaxscriptExtended/obj/x64/Release/Maxscrip.6671F0BA.tlog/rc.read.1.tlog
 MaxscriptExtended/obj/x64/Release/Maxscrip.6671F0BA.tlog/rc.write.1.tlog
 MaxscriptExtended/.vs/
 MaxscriptExtended/obj/
+plugin/.vs/
+plugin/obj/
+plugin/MXSExt.VC.db
