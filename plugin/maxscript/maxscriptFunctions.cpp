@@ -1,12 +1,12 @@
 #include "MXSExt_pch.h"
 #include <maxscript\maxscriptFunctions.h>
 
-/**
- * Extends the standard 'fileIn' MAXScript function to support
- * relative filepaths.
- *
- * @param arg_list The function arguments.
- * @returns OK
+/*
+ Extends the standard 'fileIn' MAXScript function to support
+ relative file paths.
+ 
+ @param <string> filepath - The path of the file to include. This can be written with relative pathing in mind (..\..\myFile.ms).
+ @returns <OK>
  */
 Value* rFileIn_cf(Value **arg_list, int count)
 {
@@ -29,15 +29,14 @@ Value* rFileIn_cf(Value **arg_list, int count)
 	return &ok;
 }
 
-/**
- * Reads the provided .json file, either as a single line (no whitespace)
- * or with indents.
- *
- * @param arg_list The function arguments.
- * @param pretty Whether to format the returned string with indents (true)
- *               or not (false).
- * @returns MAXValueString The contents of the .json file.
- */
+/*
+Reads the provided .json file, either as a single line (no whitespace)
+or with indents.
+
+@param <string> filepath - The path of the file to read. This can be written with relative pathing in mind (..\..\myFile.ms).
+@param <bool> pretty - Whether to format the returned string with indents (true) or not (false).
+@returns <DictionaryValue> - The contents of the .json file.
+*/
 Value* readJson_cf(Value **arg_list, int count)
 {
 	check_arg_count_with_keys(readJson, 1, count);
@@ -95,6 +94,11 @@ Value* readJson_cf(Value **arg_list, int count)
 	return mxsDict;
 }
 
+/*
+Writes the provided MAXScript dictionary to the file path specified.
+
+@returns <OK>
+*/
 Value* writeJson_cf(Value **arg_list, int count)
 {
 	return &ok;
