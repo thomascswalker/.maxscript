@@ -1,0 +1,29 @@
+{
+	"dialog" : 
+	{
+		"geometry" : 
+		{
+			"width" : 200,
+			"height" : 100
+		},
+		"properties" : 
+		{
+			"title" : "Basic Dialog",
+			"resizable" : true
+		},
+		"layout" : "grid",
+		"controls" : 
+		{
+			"myButton" : 
+			{
+				"row" : 0,
+				"column" : 0,
+				"class" : "button",
+				"width" : "auto",
+				"height" : 20,
+				"text" : "Test button",
+				"action" : ""
+			}
+		}
+	}
+}
