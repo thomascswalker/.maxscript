@@ -3,8 +3,8 @@
 	{
 		"geometry" : 
 		{
-			"width" : 200,
-			"height" : 100
+			"width" : 400,
+			"height" : 120
 		},
 		"properties" : 
 		{
@@ -14,15 +14,49 @@
 		"layout" : "grid",
 		"controls" : 
 		{
-			"myButton" : 
+			"ctlButton" : 
 			{
-				"row" : 0,
-				"column" : 0,
+				"row" : 1,
+				"column" : 1,
 				"class" : "button",
 				"width" : "auto",
 				"height" : 20,
-				"text" : "Test button",
-				"action" : ""
+				"align" : "left",
+				"text" : "Button",
+				"action" : "print (renderWidth)"
+			},
+			"ctlEditText" : 
+			{
+				"row" : 2,
+				"column" : 2,
+				"class" : "editText",
+				"width" : "auto",
+				"height" : 20,
+				"align" : "left",
+				"text" : "Textbox",
+				"action" : "print (renderWidth)"
+			},
+			"ctlSpinner" : 
+			{
+				"row" : 3,
+				"column" : 1,
+				"class" : "spinner",
+				"width" : "auto",
+				"height" : 20,
+				"align" : "left",
+				"text" : "Spinner",
+				"action" : "print (renderWidth)"
+			},
+			"ctlSpinner2" : 
+			{
+				"row" : 3,
+				"column" : 2,
+				"class" : "spinner",
+				"width" : "auto",
+				"height" : 20,
+				"align" : "left",
+				"text" : "Spinner",
+				"action" : "print (renderWidth)"
 			}
 		}
 	}
