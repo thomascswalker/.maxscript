@@ -1,12 +1,19 @@
+rFileIn @"values.ms"
+
+struct ControlResizerStruct (
+
+)
+
 struct RolloutBuilderStruct (
 private
 
-    kRoot     = Dictionary #string,
-    kDialog   = Dictionary #string,
-    kTitle    = "Main Window",
-    kLayout   = "grid",
-    kSize     = Point2 640 480,
-    kControls = #(),
+    kRoot      = Dictionary #string,
+    kDialog    = Dictionary #string,
+    kTitle     = "Main Window",
+    kLayout    = "grid",
+    kSize      = Point2 640 480,
+    kResizable = false,
+    kControls  = #(),
 
     kBuildGlobalPrefix = "rbg_",
     kBuildRolloutName  = "",
@@ -30,14 +37,6 @@ private
     fn GetControlHeight      = ((kRolloutHeight as float / kGridRows as float)    - kControlGap as float),
     fn GetControlPosX column = (kControlInitX + (column * kGridColumnWidth) - kGridColumnWidth),
     fn GetControlPosY row    = (kControlInitY + (row * kGridRowHeight) - kGridRowHeight),
-
-    fn ResizeControl ctl = (
-        local ctlDict   = Dictionary #string
-        local ctlWidth  = GetControlWidth()
-        local ctlHeight = GetControlHeight()
-        local ctlPosX   = GetControlPosX ctl.v2["column"] 
-        local ctlPosY   = GetControlPosY ctl.v2["row"]
-    ),
 
     /*
      * Builds the 
@@ -80,6 +79,7 @@ public
         kRolloutWidth = kDialog["geometry"]["width"]
         kRolloutHeight = kDialog["geometry"]["height"]
         kSize     = Point2 kDialog["geometry"]["width"] kDialog["geometry"]["height"]
+        kResizable   = kRoot["dialog"]["properties"]["resizable"]
         kControls = kRoot["dialog"]["controls"]
 
         kBuildRolloutName = kBuildGlobalPrefix + (SubstituteString kTitle " " "")
@@ -93,13 +93,32 @@ public
         kGridRowHeight = kRolloutHeight as float / kGridRows
     ),
 
+    fn ResizeControls controls = (
+        for ctl in controls do (
+            local ctlWidth  = GetControlWidth()
+            local ctlHeight = GetControlHeight()
+            local ctlPosX   = GetControlPosX ctl.v2["column"] 
+            local ctlPosY   = GetControlPosY ctl.v2["row"]
+
+            ctl.width       = ctlWidth
+            ctl.height      = ctlHeight
+            ctl.pos         = [ctlPosX, ctlPosY]
+        )
+    ),
+
+    fn GetControls = (kControls),
+
     fn Build = (
         format "global %\n" kBuildRolloutName to:kBuildString
         format "rollout % \"%\" (\n" kBuildRolloutName kTitle to:kBuildString
-        
+        format "local this = %\n" kBuildRolloutName to:kBuildString
+
         for ctl in kControls do (AddControl ctl)
 
+        format "on % resized size do rb.ResizeControls %\n" kBuildRolloutName #(kControls) to:kBuildString
         format ")" to:kBuildString
+
+        print kBuildString
 
         execute (kBuildString as string)
     ),
@@ -107,8 +126,14 @@ public
     fn Show = (
         local showStr = StringStream ""
 
+        local style = #(#style_titlebar, #style_border, #style_sysmenu)
+        if (kResizable) then (append style #style_resizing)
+
+        print style
+        print kResizable
+
         format "DestroyDialog %\n" kBuildRolloutName to:showStr
-        format "CreateDialog % width:% height:%" kBuildRolloutName kSize[1] kSize[2] to:showStr
+        format "CreateDialog % width:% height:% style:%" kBuildRolloutName kSize[1] kSize[2] (style as string) to:showStr
 
         this.Close()
         execute (showStr as string)
