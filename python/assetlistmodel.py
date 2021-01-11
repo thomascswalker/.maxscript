@@ -1,24 +1,23 @@
+# Standard imports
 import os, sys, imp
 from PySide2 import QtGui, QtCore
 from PySide2.QtCore import Qt
+from pymxs import runtime as rt
+
+# Local imports
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 import assetlistitem
-from assetlistitem import AssetListItem
-
-# Import 3ds Max modules
 try:
-    # If Max 2020
-    import MaxPlus
-    from pymxs import runtime as rt
-except ImportError:
-    # If Max 2021+
-    from pymxs import runtime as rt
+    imp.reload(assetlistitem)
+except:
+    pass
+from assetlistitem import AssetListItem
 
 class AssetListModel(QtCore.QAbstractItemModel):
     def __init__(self, parent=None):
         super(AssetListModel, self).__init__(parent)
 
-        headers = ("Name", "Path", "Type")
+        headers = ("Name", "Path", "Ext", "Type")
         rootData = [header for header in headers]
         self.rootItem = AssetListItem(rootData)
         self.setupModelData(self.rootItem)
@@ -132,28 +131,25 @@ class AssetListModel(QtCore.QAbstractItemModel):
         return result
 
     def setupModelData(self, parent):
+        """
+        
+        """
         parents = [parent]
-        assets = []
+        numAssets = rt.AssetManager.getNumAssets()
 
-        try:
-            # Max 2020
-            assets = MaxPlus.AssetManager.GetAssets()
-        except:
-            # Max 2021+
-            assets = rt.AssetManager.GetAssets()
+        for i in range(1, numAssets + 1):
+            asset         = rt.AssetManager.getAssetByIndex(i)
 
-        for i in range(0, assets.GetCount()):
-            asset = assets.At(i)
-
-            assetFilename = asset.GetResolvedFileName()
+            assetFilename = asset.GetFilename()
             assetBasename = os.path.basename(assetFilename)
 
             assetName     = os.path.splitext(assetBasename)[0]
             assetPath     = os.path.dirname(assetFilename)
             assetExt      = os.path.splitext(assetBasename)[1]
+            assetType     = str(asset.GetType())
 
             # Read the column data from the rest of the line.
-            columnData = [assetName, assetPath, assetExt]
+            columnData = [assetName, assetPath, assetExt, assetType]
 
             # Append a new item to the current parent's list of children.
             parent = parents[-1]

@@ -1,13 +1,6 @@
+# Standard imports
 from PySide2 import QtGui, QtCore
-
-# Import 3ds Max modules
-try:
-    # If Max 2020
-    import MaxPlus
-    from pymxs import runtime as rt
-except ImportError:
-    # If Max 2021+
-    from pymxs import runtime as rt
+from pymxs import runtime as rt
 
 class AssetListItem(object):
     def __init__(self, data, parent=None):

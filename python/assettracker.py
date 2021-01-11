@@ -1,3 +1,4 @@
+# Standard imports
 import sys, os, imp, PySide2
 
 from PySide2.QtWidgets import QVBoxLayout
@@ -9,18 +10,15 @@ from PySide2.QtCore import QFile
 from PySide2.QtUiTools import QUiLoader
 from pymxs import runtime as rt
 
+# Local imports
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 import assetlistmodel
-from assetlistmodel import AssetListModel
-
-# Import 3ds Max modules
 try:
-    # If Max 2020
-    import MaxPlus
-    from pymxs import runtime as rt
-except ImportError:
-    # If Max 2021+
-    from pymxs import runtime as rt
+    # Try to reload all modules
+    imp.reload(assetlistmodel)
+except:
+    pass
+from assetlistmodel import AssetListModel
 
 class AssetTrackerDialog(QMainWindow):
     def __init__(self, parent=QWidget.find(rt.windows.getMAXHWND())):
@@ -34,14 +32,21 @@ class AssetTrackerDialog(QMainWindow):
         self.setCentralWidget(self.ui)
 
 def main():
-    dialog = AssetTrackerDialog()
-    ui = dialog.ui
+    global pyAssetTrackerDialog
+
+    try:
+        pyAssetTrackerDialog.ui.close()
+    except:
+        pass
+
+    pyAssetTrackerDialog = AssetTrackerDialog()
+    ui = pyAssetTrackerDialog.ui
 
     treeModel = AssetListModel()
     ui.treeView.setModel(treeModel)
 
     ui.show()
-    ui.setWindowTitle("Asset Tracker")
+    ui.setWindowTitle("Better Asset Tracker")
 
 if __name__ == '__main__':
     main()
