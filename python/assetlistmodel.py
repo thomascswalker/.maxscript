@@ -9,10 +9,10 @@ from assetlistitem import AssetListItem
 try:
     # If Max 2020
     import MaxPlus
-    from pymxs import runtime as mxs
+    from pymxs import runtime as rt
 except ImportError:
     # If Max 2021+
-    from pymxs import runtime as mxs
+    from pymxs import runtime as rt
 
 class AssetListModel(QtCore.QAbstractItemModel):
     def __init__(self, parent=None):
@@ -21,9 +21,7 @@ class AssetListModel(QtCore.QAbstractItemModel):
         headers = ("Name", "Path", "Type")
         rootData = [header for header in headers]
         self.rootItem = AssetListItem(rootData)
-
-        assets = MaxPlus.AssetManager.GetAssets()
-        self.setupModelData(assets, self.rootItem)
+        self.setupModelData(self.rootItem)
 
     def columnCount(self, parent=QtCore.QModelIndex()):
         return self.rootItem.columnCount()
@@ -133,8 +131,16 @@ class AssetListModel(QtCore.QAbstractItemModel):
 
         return result
 
-    def setupModelData(self, assets, parent):
+    def setupModelData(self, parent):
         parents = [parent]
+        assets = []
+
+        try:
+            # Max 2020
+            assets = MaxPlus.AssetManager.GetAssets()
+        except:
+            # Max 2021+
+            assets = rt.AssetManager.GetAssets()
 
         for i in range(0, assets.GetCount()):
             asset = assets.At(i)

@@ -17,10 +17,10 @@ from assetlistmodel import AssetListModel
 try:
     # If Max 2020
     import MaxPlus
-    from pymxs import runtime as mxs
+    from pymxs import runtime as rt
 except ImportError:
     # If Max 2021+
-    from pymxs import runtime as mxs
+    from pymxs import runtime as rt
 
 class AssetTrackerDialog(QMainWindow):
     def __init__(self, parent=QWidget.find(rt.windows.getMAXHWND())):

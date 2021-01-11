@@ -47,3 +47,4 @@ plugin/.vs/
 plugin/obj/
 plugin/MXSExt.VC.db
 workspace.code-workspace
+*.pyc

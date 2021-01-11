@@ -17,10 +17,25 @@
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
      <widget class="QTreeView" name="treeView">
+      <property name="selectionMode">
+       <enum>QAbstractItemView::ExtendedSelection</enum>
+      </property>
+      <property name="autoExpandDelay">
+       <number>0</number>
+      </property>
+      <property name="rootIsDecorated">
+       <bool>false</bool>
+      </property>
       <property name="uniformRowHeights">
        <bool>true</bool>
       </property>
+      <property name="sortingEnabled">
+       <bool>true</bool>
+      </property>
       <property name="animated">
+       <bool>true</bool>
+      </property>
+      <property name="allColumnsShowFocus">
        <bool>true</bool>
       </property>
      </widget>
