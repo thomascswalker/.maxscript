@@ -12,7 +12,15 @@ from pymxs import runtime as rt
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 import assetlistmodel
 from assetlistmodel import AssetListModel
-imp.reload(assetlistmodel)
+
+# Import 3ds Max modules
+try:
+    # If Max 2020
+    import MaxPlus
+    from pymxs import runtime as mxs
+except ImportError:
+    # If Max 2021+
+    from pymxs import runtime as mxs
 
 class AssetTrackerDialog(QMainWindow):
     def __init__(self, parent=QWidget.find(rt.windows.getMAXHWND())):
