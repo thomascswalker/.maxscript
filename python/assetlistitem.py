@@ -13,7 +13,8 @@ class AssetListItem(object):
         self._icon = None
 
     def child(self, row):
-        return self.childItems[row]
+        if len(self.childItems) >= row:
+            return self.childItems[row]
 
     def childCount(self):
         return len(self.childItems)

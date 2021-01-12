@@ -159,6 +159,9 @@ class AssetListModel(QtCore.QAbstractItemModel):
             iconProvider = QFileIconProvider()
             assetIcon = iconProvider.icon(fileInfo)
 
+            # Get the references associated with the asset filename
+            assetRefs = functions.getAssetRefs(assetFilename)
+
             # Read the column data from the rest of the line.
             columnData = [assetName, assetExt, assetPath, assetType]
 
@@ -174,34 +177,63 @@ class AssetListModel(QtCore.QAbstractItemModel):
 
             # Insert three children to the new node for the referenced
             # materials, geometry, and modifiers
-            node.insertChildren(0, 3, self.rootItem.columnCount())
+            if len(assetRefs) > 0:
+                if len(assetRefs["materials"]) > 0:
+                    node.insertChildren(0, 1, self.rootItem.columnCount())
+                    materialNode = node.child(0)
+                    if (materialNode != None):
+                        materialNode.setData(0, "Materials")
+                        for i in range(len(assetRefs["materials"])):
+                            assetType = assetRefs["materials"][i]
+                            materialNode.insertChildren(i, 1, self.rootItem.columnCount())
+                            refNode = materialNode.child(i)
+                            refNode.setData(0, str(assetType))
 
-            materialNode = node.child(0)
-            materialNode.setData(0, "Materials")
+                if len(assetRefs["geometry"]) > 0:
+                    node.insertChildren(1, 1, self.rootItem.columnCount())
+                    geometryNode = node.child(1)
+                    if (geometryNode != None):
+                        geometryNode.setData(0, "Geometry")
+                        for i in range(len(assetRefs["geometry"])):
+                            assetType = assetRefs["geometry"][i]
+                            geometryNode.insertChildren(i, 1, self.rootItem.columnCount())
+                            refNode = geometryNode.child(i)
+                            refNode.setData(0, str(assetType))
 
-            geometryNode = node.child(1)
-            geometryNode.setData(0, "Geometry")
+                if len(assetRefs["modifiers"]) > 0:
+                    node.insertChildren(2, 1, self.rootItem.columnCount())
+                    modifierNode = node.child(2)
+                    if modifierNode != None:
+                        modifierNode.setData(0, "Modifiers")
+                        for i in range(len(assetRefs["modifiers"])):
+                            assetType = assetRefs["modifiers"][i]
+                            modifierNode.insertChildren(i, 1, self.rootItem.columnCount())
+                            refNode = modifierNode.child(i)
+                            refNode.setData(0, str(assetType))
 
-            modifierNode = node.child(2)
-            modifierNode.setData(0, "Modifiers")
+            # geometryNode = node.child(1)
+            # geometryNode.setData(0, "Geometry")
+
+            # modifierNode = node.child(2)
+            # modifierNode.setData(0, "Modifiers")
 
             # Get the asset's refs
-            assetRefs = functions.getAssetRefs(assetFilename)
             
-            for i in range(len(assetRefs["materials"])):
-                assetType = assetRefs["materials"][i]
-                materialNode.insertChildren(i, 1, self.rootItem.columnCount())
-                refNode = materialNode.child(i)
-                refNode.setData(0, str(assetType))
+            
+            # for i in range(len(assetRefs["materials"])):
+            #     assetType = assetRefs["materials"][i]
+            #     materialNode.insertChildren(i, 1, self.rootItem.columnCount())
+            #     refNode = materialNode.child(i)
+            #     refNode.setData(0, str(assetType))
 
-            for i in range(len(assetRefs["geometry"])):
-                assetType = assetRefs["geometry"][i]
-                geometryNode.insertChildren(i, 1, self.rootItem.columnCount())
-                refNode = geometryNode.child(i)
-                refNode.setData(0, str(assetType))
+            # for i in range(len(assetRefs["geometry"])):
+            #     assetType = assetRefs["geometry"][i]
+            #     geometryNode.insertChildren(i, 1, self.rootItem.columnCount())
+            #     refNode = geometryNode.child(i)
+            #     refNode.setData(0, str(assetType))
 
-            for i in range(len(assetRefs["modifiers"])):
-                assetType = assetRefs["modifiers"][i]
-                modifierNode.insertChildren(i, 1, self.rootItem.columnCount())
-                refNode = modifierNode.child(i)
-                refNode.setData(0, str(assetType))
+            # for i in range(len(assetRefs["modifiers"])):
+            #     assetType = assetRefs["modifiers"][i]
+            #     modifierNode.insertChildren(i, 1, self.rootItem.columnCount())
+            #     refNode = modifierNode.child(i)
+            #     refNode.setData(0, str(assetType))

@@ -2,6 +2,10 @@ from pymxs import runtime as rt
 import json, os
 
 class AssetListFunctions(object):
+    _materialClass = rt.execute("material")
+    _geometryClass = rt.execute("geometryclass")
+    _modifierClass = rt.execute("modifier")
+
     """
     @name: getSettings
     @desc: Gets the settings from the settings .json file.
@@ -25,26 +29,40 @@ class AssetListFunctions(object):
         data = self.getSettings()
 
         materials = []
-        geometry = []
+        geometry  = []
         modifiers = []
 
-        for classType in data["BitmapClasses"]:
-            theClass = rt.execute(classType)
-            if theClass != None:
-                nodes = rt.GetClassInstances(theClass)
-            
-            for node in nodes:
-                refs = rt.refs.dependents(node)
-                for ref in refs:
-                    if rt.superClassOf(ref) == rt.execute("material"):
-                        materials.append(ref)
-                    if rt.superClassOf(ref) == rt.execute("geometryclass"):
-                        geometry.append(ref)
-                    if rt.superClassOf(ref) == rt.execute("modifier"):
-                        modifiers.append(ref)
+        for classKey in data["BitmapClasses"]:
+            paramName = data["BitmapClasses"][classKey]
+            classValue = rt.execute(classKey)
 
-        uniqueMaterials = list(set(materials))
-        uniqueGeometry = list(set(geometry))
-        uniqueModifiers = list(set(modifiers))
+            instances = []
+            nodes = []
+            if classValue != None:
+                instances = rt.GetClassInstances(classValue)
+                for inst in instances:
+                    if (rt.getProperty(inst, paramName)) == filename:
+                        nodes.append(inst)
+            if len(nodes) > 0:
+                for node in nodes:
+                    refs = rt.refs.dependents(node)
 
-        return {"materials" : uniqueMaterials, "geometry" : uniqueGeometry, "modifiers": uniqueModifiers}
+                    for ref in refs:
+                        if rt.superClassOf(ref) == self._materialClass:
+                            materials.append(ref)
+                        if rt.superClassOf(ref) == self._geometryClass:
+                            geometry.append(ref)
+                        if rt.superClassOf(ref) == self._modifierClass:
+                            modifiers.append(ref)
+
+                uniqueMaterials = list(set(materials))
+                uniqueGeometry  = list(set(geometry))
+                uniqueModifiers = list(set(modifiers))
+
+                return  {
+                            "materials" : uniqueMaterials,
+                            "geometry" : uniqueGeometry,
+                            "modifiers": uniqueModifiers
+                        }
+
+        return {}
