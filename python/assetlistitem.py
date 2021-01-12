@@ -1,5 +1,8 @@
 # Standard imports
-from PySide2 import QtGui, QtCore
+from PySide2 import QtWidgets, QtGui, QtCore
+from PySide2.QtWidgets import QFileIconProvider
+from PySide2.QtGui import QIcon
+from PySide2.QtCore import QFileInfo
 from pymxs import runtime as rt
 
 class AssetListItem(object):
@@ -7,6 +10,7 @@ class AssetListItem(object):
         self.parentItem = parent
         self.itemData = data
         self.childItems = []
+        self._icon = None
 
     def child(self, row):
         return self.childItems[row]
@@ -79,3 +83,9 @@ class AssetListItem(object):
         self.itemData[column] = value
 
         return True
+
+    def setIcon(self, icon):
+        self._icon = icon
+
+    def icon(self):
+        return self._icon

@@ -1,7 +1,8 @@
 # Standard imports
 import os, sys, imp
-from PySide2 import QtGui, QtCore
+from PySide2 import QtGui, QtCore, QtWidgets
 from PySide2.QtCore import Qt
+from PySide2.QtWidgets import QFileIconProvider
 from pymxs import runtime as rt
 
 # Local imports
@@ -17,7 +18,7 @@ class AssetListModel(QtCore.QAbstractItemModel):
     def __init__(self, parent=None):
         super(AssetListModel, self).__init__(parent)
 
-        headers = ("Name", "Path", "Ext", "Type")
+        headers = ("Name", "Ext", "Path", "Type")
         rootData = [header for header in headers]
         self.rootItem = AssetListItem(rootData)
         self.setupModelData(self.rootItem)
@@ -26,13 +27,17 @@ class AssetListModel(QtCore.QAbstractItemModel):
         return self.rootItem.columnCount()
 
     def data(self, index, role):
+        item = self.getItem(index)
+
         if not index.isValid():
             return None
+
+        if role == QtCore.Qt.DecorationRole and index.column() == 0:
+            return item.icon()
 
         if role != QtCore.Qt.DisplayRole and role != QtCore.Qt.EditRole:
             return None
 
-        item = self.getItem(index)
         return item.data(index.column())
 
     def flags(self, index):
@@ -148,11 +153,16 @@ class AssetListModel(QtCore.QAbstractItemModel):
             assetExt      = os.path.splitext(assetBasename)[1]
             assetType     = str(asset.GetType())
 
+            fileInfo = QtCore.QFileInfo(assetFilename)
+            iconProvider = QFileIconProvider()
+            assetIcon = iconProvider.icon(fileInfo)
+
             # Read the column data from the rest of the line.
-            columnData = [assetName, assetPath, assetExt, assetType]
+            columnData = [assetName, assetExt, assetPath, assetType]
 
             # Append a new item to the current parent's list of children.
             parent = parents[-1]
-            parent.insertChildren(parent.childCount(), 1,self.rootItem.columnCount())
+            parent.insertChildren(parent.childCount(), 1, self.rootItem.columnCount())
             for column in range(len(columnData)):
-                parent.child(parent.childCount() -1).setData(column, columnData[column])
+                parent.child(parent.childCount() - 1).setData(column, columnData[column])
+                parent.child(parent.childCount() - 1).setIcon(assetIcon)

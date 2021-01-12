@@ -1,11 +1,7 @@
 # Standard imports
 import sys, os, imp, PySide2
 
-from PySide2.QtWidgets import QVBoxLayout
-from PySide2.QtWidgets import QWidget
-from PySide2.QtWidgets import QDialog
-from PySide2.QtWidgets import QMainWindow
-from PySide2.QtWidgets import QPushButton
+from PySide2.QtWidgets import QWidget, QDialog, QMainWindow, QVBoxLayout
 from PySide2.QtCore import QFile
 from PySide2.QtUiTools import QUiLoader
 from pymxs import runtime as rt
