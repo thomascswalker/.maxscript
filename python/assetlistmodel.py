@@ -15,6 +15,7 @@ try:
 except:
     pass
 from assetlistitem import AssetListItem
+from assetfunctions import AssetListFunctions
 
 class AssetListModel(QtCore.QAbstractItemModel):
     def __init__(self, parent=None):
@@ -138,9 +139,11 @@ class AssetListModel(QtCore.QAbstractItemModel):
         return result
 
     def setupModelData(self, parent):
+        functions = AssetListFunctions()
         parents = [parent]
         numAssets = rt.AssetManager.getNumAssets()
 
+        # For each asset (row)
         for i in range(1, numAssets + 1):
             asset         = rt.AssetManager.getAssetByIndex(i)
 
@@ -162,6 +165,43 @@ class AssetListModel(QtCore.QAbstractItemModel):
             # Append a new item to the current parent's list of children.
             parent = parents[-1]
             parent.insertChildren(parent.childCount(), 1, self.rootItem.columnCount())
+            node = parent.child(parent.childCount() - 1)
+
+            # Fill each column in the current row
             for column in range(len(columnData)):
-                parent.child(parent.childCount() - 1).setData(column, columnData[column])
-                parent.child(parent.childCount() - 1).setIcon(assetIcon)
+                node.setData(column, columnData[column])
+                node.setIcon(assetIcon)
+
+            # Insert three children to the new node for the referenced
+            # materials, geometry, and modifiers
+            node.insertChildren(0, 3, self.rootItem.columnCount())
+
+            materialNode = node.child(0)
+            materialNode.setData(0, "Materials")
+
+            geometryNode = node.child(1)
+            geometryNode.setData(0, "Geometry")
+
+            modifierNode = node.child(2)
+            modifierNode.setData(0, "Modifiers")
+
+            # Get the asset's refs
+            assetRefs = functions.getAssetRefs(assetFilename)
+            
+            for i in range(len(assetRefs["materials"])):
+                assetType = assetRefs["materials"][i]
+                materialNode.insertChildren(i, 1, self.rootItem.columnCount())
+                refNode = materialNode.child(i)
+                refNode.setData(0, str(assetType))
+
+            for i in range(len(assetRefs["geometry"])):
+                assetType = assetRefs["geometry"][i]
+                geometryNode.insertChildren(i, 1, self.rootItem.columnCount())
+                refNode = geometryNode.child(i)
+                refNode.setData(0, str(assetType))
+
+            for i in range(len(assetRefs["modifiers"])):
+                assetType = assetRefs["modifiers"][i]
+                modifierNode.insertChildren(i, 1, self.rootItem.columnCount())
+                refNode = modifierNode.child(i)
+                refNode.setData(0, str(assetType))
