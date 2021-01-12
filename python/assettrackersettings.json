@@ -1,0 +1,7 @@
+{
+    "BitmapClasses" : {
+        "BitmapTexture" : "fileName",
+        "VRayHDRI" : "HDRIMapName",
+        "VRayBitmap" : "HDRIMapName"
+    }
+}

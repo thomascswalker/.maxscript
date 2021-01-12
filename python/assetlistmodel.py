@@ -8,8 +8,10 @@ from pymxs import runtime as rt
 # Local imports
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 import assetlistitem
+import assetfunctions
 try:
     imp.reload(assetlistitem)
+    imp.reload(assetfunctions)
 except:
     pass
 from assetlistitem import AssetListItem
@@ -136,9 +138,6 @@ class AssetListModel(QtCore.QAbstractItemModel):
         return result
 
     def setupModelData(self, parent):
-        """
-        
-        """
         parents = [parent]
         numAssets = rt.AssetManager.getNumAssets()
 
