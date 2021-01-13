@@ -2,6 +2,21 @@
     "BitmapClasses" : {
         "BitmapTexture" : "fileName",
         "VRayHDRI" : "HDRIMapName",
-        "VRayBitmap" : "HDRIMapName"
+        "VRayBitmap" : "HDRIMapName",
+        "VRayProxy" : "fileName"
+    },
+    "ContextMenus" : {
+        "file" : {
+
+        },
+        "material" : {
+
+        },
+        "geometry" : {
+
+        },
+        "modifier" : {
+
+        }
     }
 }

@@ -55,14 +55,10 @@ class AssetListFunctions(object):
                         if rt.superClassOf(ref) == self._modifierClass:
                             modifiers.append(ref)
 
-                uniqueMaterials = list(set(materials))
-                uniqueGeometry  = list(set(geometry))
-                uniqueModifiers = list(set(modifiers))
-
                 return  {
-                            "materials" : uniqueMaterials,
-                            "geometry" : uniqueGeometry,
-                            "modifiers": uniqueModifiers
+                            "materials" : materials,
+                            "geometry" : geometry,
+                            "modifiers": modifiers
                         }
 
         return {}
