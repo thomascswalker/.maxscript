@@ -145,16 +145,20 @@ class AssetListModel(QtCore.QAbstractItemModel):
 
         # For each asset (row)
         for i in range(1, numAssets + 1):
+
+            # Get the asset object
             asset         = rt.AssetManager.getAssetByIndex(i)
 
+            # Get the asset properties
             assetFilename = asset.GetFilename()
             assetBasename = os.path.basename(assetFilename)
-
             assetName     = os.path.splitext(assetBasename)[0]
             assetPath     = os.path.dirname(assetFilename)
             assetExt      = os.path.splitext(assetBasename)[1]
             assetType     = str(asset.GetType())
 
+            # We'll use QFileIconProvider to grab the icon that the OS
+            # is currently using to grab the icon to display in the view
             fileInfo = QtCore.QFileInfo(assetFilename)
             iconProvider = QFileIconProvider()
             assetIcon = iconProvider.icon(fileInfo)
@@ -210,30 +214,3 @@ class AssetListModel(QtCore.QAbstractItemModel):
                             modifierNode.insertChildren(i, 1, self.rootItem.columnCount())
                             refNode = modifierNode.child(i)
                             refNode.setData(0, str(assetType))
-
-            # geometryNode = node.child(1)
-            # geometryNode.setData(0, "Geometry")
-
-            # modifierNode = node.child(2)
-            # modifierNode.setData(0, "Modifiers")
-
-            # Get the asset's refs
-            
-            
-            # for i in range(len(assetRefs["materials"])):
-            #     assetType = assetRefs["materials"][i]
-            #     materialNode.insertChildren(i, 1, self.rootItem.columnCount())
-            #     refNode = materialNode.child(i)
-            #     refNode.setData(0, str(assetType))
-
-            # for i in range(len(assetRefs["geometry"])):
-            #     assetType = assetRefs["geometry"][i]
-            #     geometryNode.insertChildren(i, 1, self.rootItem.columnCount())
-            #     refNode = geometryNode.child(i)
-            #     refNode.setData(0, str(assetType))
-
-            # for i in range(len(assetRefs["modifiers"])):
-            #     assetType = assetRefs["modifiers"][i]
-            #     modifierNode.insertChildren(i, 1, self.rootItem.columnCount())
-            #     refNode = modifierNode.child(i)
-            #     refNode.setData(0, str(assetType))
