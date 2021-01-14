@@ -20,6 +20,7 @@ from assetlistmodel import AssetListModel
 class AssetTrackerDialog(QMainWindow):
     def __init__(self, parent=QWidget.find(rt.windows.getMAXHWND())):
         QMainWindow.__init__(self, parent)
+        
         loader = QUiLoader()
         ui_file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'assettracker.ui')
         ui_file = QFile(ui_file_path)
@@ -27,6 +28,38 @@ class AssetTrackerDialog(QMainWindow):
         self.ui = loader.load(ui_file, self)
         ui_file.close()
         self.setCentralWidget(self.ui)
+
+        self.settings = QSettings("MaxExtended", "BetterAssetTracker")
+        self.readSettings()
+
+    def writeSettings(self):
+        self.settings.beginGroup("mainWindow")
+        self.settings.setValue("pos", self.MainWindow.pos())
+        self.settings.setValue("maximized", self.MainWindow.isMaximized())
+        if not self.MainWindow.isMaximized():
+            self.settings.setValue("size", self.MainWindow.size())
+
+        self.settings.endGroup()
+
+    def readSettings(self):
+        self.settings.beginGroup("mainWindow")
+        # No need for toPoint, etc. : PySide converts types
+        try:
+            self.MainWindow.move(self.settings.value("pos"))
+            if self.settings.value("maximized") in 'true':
+                self.MainWindow.showMaximized()
+            else:
+                self.MainWindow.resize(self.settings.value("size"))
+        except:
+            pass
+        self.settings.endGroup()
+
+    def closeEvent(self, e):
+        # Write window size and position to config file
+        print("close event")
+        self.writeSettings()
+        e.accept()
+
 
 def main():
     # Try to close any existing dialogs so there aren't
