@@ -47,6 +47,9 @@ class AssetListFunctions(object):
             # Get the MAXScript Value of the class
             classValue = rt.execute(classKey)
 
+            # Create an empty list of the nodes we'll look through
+            nodes = []
+
             # If it DOES exist, meaning the standard or 3rd party plugins
             # are found (Max, Arnold, V-Ray, etc.)
             if classValue != None:

@@ -2,7 +2,7 @@
 import sys, os, imp, PySide2
 
 from PySide2.QtWidgets import QWidget, QDialog, QMainWindow, QVBoxLayout
-from PySide2.QtCore import QFile
+from PySide2.QtCore import QFile, QSortFilterProxyModel
 from PySide2.QtUiTools import QUiLoader
 from pymxs import runtime as rt
 
@@ -10,7 +10,8 @@ from pymxs import runtime as rt
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 import assetlistmodel
 try:
-    # Try to reload all modules
+    # Try to reload all modules, if this doesn't work
+    # it'll crash
     imp.reload(assetlistmodel)
 except:
     pass
@@ -28,19 +29,28 @@ class AssetTrackerDialog(QMainWindow):
         self.setCentralWidget(self.ui)
 
 def main():
+    # Try to close any existing dialogs so there aren't
+    # duplicates open.
     global pyAssetTrackerDialog
-
     try:
         pyAssetTrackerDialog.ui.close()
     except:
         pass
 
+    # Instantiate the main dialog
     pyAssetTrackerDialog = AssetTrackerDialog()
     ui = pyAssetTrackerDialog.ui
 
-    treeModel = AssetListModel()
-    ui.treeView.setModel(treeModel)
+    # Create the source model, but map it to a proxy model to enable
+    # sorting, filtering, etc.
+    sourceModel = AssetListModel()
+    proxyModel = QSortFilterProxyModel()
+    proxyModel.setSourceModel(sourceModel)
 
+    # Assign the proxy model to the tree view
+    ui.treeView.setModel(proxyModel)
+
+    # Show the UI
     ui.show()
     ui.setWindowTitle("Better Asset Tracker")
 

@@ -1,7 +1,7 @@
 # Standard imports
 import os, sys, imp
 from PySide2 import QtGui, QtCore, QtWidgets
-from PySide2.QtCore import Qt
+from PySide2.QtCore import Qt, QSortFilterProxyModel
 from PySide2.QtWidgets import QFileIconProvider
 from pymxs import runtime as rt
 
@@ -21,13 +21,19 @@ class AssetListModel(QtCore.QAbstractItemModel):
     def __init__(self, parent=None):
         super(AssetListModel, self).__init__(parent)
 
-        headers = ("Name", "Ext", "Path", "Type")
-        rootData = [header for header in headers]
-        self.rootItem = AssetListItem(rootData)
-        self.setupModelData(self.rootItem)
+        # Define the visible headers in the main tree view
+        headers = ("Name", "Ext", "Path", "Type", "Status")
+        self._rootHeaders = [header for header in headers]
+
+        # Build the root (invisible) item in the tree view.
+        # This will allow the headers to be set and visible.
+        self._rootItem = AssetListItem(self._rootHeaders)
+
+        # Setup the rest of the model data
+        self.setupModelData(self._rootItem)
 
     def columnCount(self, parent=QtCore.QModelIndex()):
-        return self.rootItem.columnCount()
+        return self._rootItem.columnCount()
 
     def data(self, index, role):
         item = self.getItem(index)
@@ -55,11 +61,11 @@ class AssetListModel(QtCore.QAbstractItemModel):
             if item:
                 return item
 
-        return self.rootItem
+        return self._rootItem
 
     def headerData(self, section, orientation, role):
         if role == Qt.DisplayRole and orientation == Qt.Horizontal:
-            return self.rootItem.data(section)
+            return self._rootItem.data(section)
 
         return None
 
@@ -76,7 +82,7 @@ class AssetListModel(QtCore.QAbstractItemModel):
 
     def insertColumns(self, position, columns, parent=QtCore.QModelIndex()):
         self.beginInsertColumns(parent, position, position + columns - 1)
-        success = self.rootItem.insertColumns(position, columns)
+        success = self._rootItem.insertColumns(position, columns)
         self.endInsertColumns()
 
         return success
@@ -85,7 +91,7 @@ class AssetListModel(QtCore.QAbstractItemModel):
         parentItem = self.getItem(parent)
         self.beginInsertRows(parent, position, position + rows - 1)
         success = parentItem.insertChildren(position, rows,
-                self.rootItem.columnCount())
+                self._rootItem.columnCount())
         self.endInsertRows()
 
         return success
@@ -97,17 +103,17 @@ class AssetListModel(QtCore.QAbstractItemModel):
         childItem = self.getItem(index)
         parentItem = childItem.parent()
 
-        if parentItem == self.rootItem:
+        if parentItem == self._rootItem:
             return QtCore.QModelIndex()
 
         return self.createIndex(parentItem.childNumber(), 0, parentItem)
 
     def removeColumns(self, position, columns, parent=QtCore.QModelIndex()):
         self.beginRemoveColumns(parent, position, position + columns - 1)
-        success = self.rootItem.removeColumns(position, columns)
+        success = self._rootItem.removeColumns(position, columns)
         self.endRemoveColumns()
 
-        if self.rootItem.columnCount() == 0:
+        if self._rootItem.columnCount() == 0:
             self.removeRows(0, rowCount())
 
         return success
@@ -171,7 +177,7 @@ class AssetListModel(QtCore.QAbstractItemModel):
 
             # Append a new item to the current parent's list of children.
             parent = parents[-1]
-            parent.insertChildren(parent.childCount(), 1, self.rootItem.columnCount())
+            parent.insertChildren(parent.childCount(), 1, self._rootItem.columnCount())
             node = parent.child(parent.childCount() - 1)
 
             # Fill each column in the current row
@@ -183,34 +189,34 @@ class AssetListModel(QtCore.QAbstractItemModel):
             # materials, geometry, and modifiers
             if len(assetRefs) > 0:
                 if len(assetRefs["materials"]) > 0:
-                    node.insertChildren(0, 1, self.rootItem.columnCount())
+                    node.insertChildren(0, 1, self._rootItem.columnCount())
                     materialNode = node.child(0)
                     if (materialNode != None):
                         materialNode.setData(0, "Materials")
                         for i in range(len(assetRefs["materials"])):
                             assetType = assetRefs["materials"][i]
-                            materialNode.insertChildren(i, 1, self.rootItem.columnCount())
+                            materialNode.insertChildren(i, 1, self._rootItem.columnCount())
                             refNode = materialNode.child(i)
                             refNode.setData(0, str(assetType))
 
                 if len(assetRefs["geometry"]) > 0:
-                    node.insertChildren(1, 1, self.rootItem.columnCount())
+                    node.insertChildren(1, 1, self._rootItem.columnCount())
                     geometryNode = node.child(1)
                     if (geometryNode != None):
                         geometryNode.setData(0, "Geometry")
                         for i in range(len(assetRefs["geometry"])):
                             assetType = assetRefs["geometry"][i]
-                            geometryNode.insertChildren(i, 1, self.rootItem.columnCount())
+                            geometryNode.insertChildren(i, 1, self._rootItem.columnCount())
                             refNode = geometryNode.child(i)
                             refNode.setData(0, str(assetType))
 
                 if len(assetRefs["modifiers"]) > 0:
-                    node.insertChildren(2, 1, self.rootItem.columnCount())
+                    node.insertChildren(2, 1, self._rootItem.columnCount())
                     modifierNode = node.child(2)
                     if modifierNode != None:
                         modifierNode.setData(0, "Modifiers")
                         for i in range(len(assetRefs["modifiers"])):
                             assetType = assetRefs["modifiers"][i]
-                            modifierNode.insertChildren(i, 1, self.rootItem.columnCount())
+                            modifierNode.insertChildren(i, 1, self._rootItem.columnCount())
                             refNode = modifierNode.child(i)
                             refNode.setData(0, str(assetType))
