@@ -1,9 +1,10 @@
 {
     "BitmapClasses" : {
-        "BitmapTexture" : "fileName",
-        "VRayHDRI" : "HDRIMapName",
-        "VRayBitmap" : "HDRIMapName",
-        "VRayProxy" : "fileName"
+        "BitmapTexture" : ["fileName"],
+        "VRayHDRI" : ["HDRIMapName"],
+        "VRayBitmap" : ["HDRIMapName"],
+        "VRayProxy" : ["fileName"],
+		"OSLMap" : ["Filename"]
     },
     "ContextMenus" : {
         "file" : {

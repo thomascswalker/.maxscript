@@ -2,7 +2,7 @@
 import sys, os, imp, PySide2
 
 from PySide2.QtWidgets import QWidget, QDialog, QMainWindow, QVBoxLayout
-from PySide2.QtCore import QFile, QSortFilterProxyModel
+from PySide2.QtCore import QFile, QSortFilterProxyModel, QSettings
 from PySide2.QtUiTools import QUiLoader
 from pymxs import runtime as rt
 
@@ -53,6 +53,10 @@ class AssetTrackerDialog(QMainWindow):
         except:
             pass
         self.settings.endGroup()
+        
+    def closeEvent(self, args):
+        print(args)
+        self.writeSettings()
 
 def main():
     # Try to close any existing dialogs so there aren't
