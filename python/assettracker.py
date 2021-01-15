@@ -28,7 +28,7 @@ class AssetTrackerDialog(QMainWindow):
         self.ui = loader.load(ui_file, self)
         ui_file.close()
         self.setCentralWidget(self.ui)
-
+        
         self.settings = QSettings("MaxExtended", "BetterAssetTracker")
         self.readSettings()
 
@@ -53,13 +53,6 @@ class AssetTrackerDialog(QMainWindow):
         except:
             pass
         self.settings.endGroup()
-
-    def closeEvent(self, e):
-        # Write window size and position to config file
-        print("close event")
-        self.writeSettings()
-        e.accept()
-
 
 def main():
     # Try to close any existing dialogs so there aren't
