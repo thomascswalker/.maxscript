@@ -144,6 +144,38 @@ class AssetListModel(QtCore.QAbstractItemModel):
 
         return result
 
+    def insertRefs(self, classType, assetRefs, node):
+        # Check to make sure the number of refs is greater than 0
+        if len(assetRefs[classType]) > 0:
+
+            # Get the row index to insert at
+            row = node.childCount()
+
+            # Insert the reference parent row. This is the 'Materials', 'Geometry',
+            # etc. node which can then be expanded.
+            node.insertChildren(row, 1, self._rootItem.columnCount())
+            refParentNode = node.child(row)
+
+            # If the node insertion worked...
+            if (refParentNode != None):
+
+                # Name it
+                refParentNode.setData(0, classType)
+
+                # Then iterate through each of the references, inserting each
+                for i in range(len(assetRefs[classType])):
+
+                    # Get the 'name' of the asset, which is just the Name and Class
+                    assetType = assetRefs[classType][i]
+
+                    # Insert the new node
+                    refParentNode.insertChildren(i, 1, self._rootItem.columnCount())
+
+                    # Set the data of the newly-created node
+                    refNode = refParentNode.child(i)
+                    refNode.setData(0, str(assetType))
+
+
     def setupModelData(self, parent):
         functions = AssetListFunctions()
         parents = [parent]
@@ -188,35 +220,6 @@ class AssetListModel(QtCore.QAbstractItemModel):
             # Insert three children to the new node for the referenced
             # materials, geometry, and modifiers
             if len(assetRefs) > 0:
-                if len(assetRefs["materials"]) > 0:
-                    node.insertChildren(0, 1, self._rootItem.columnCount())
-                    materialNode = node.child(0)
-                    if (materialNode != None):
-                        materialNode.setData(0, "Materials")
-                        for i in range(len(assetRefs["materials"])):
-                            assetType = assetRefs["materials"][i]
-                            materialNode.insertChildren(i, 1, self._rootItem.columnCount())
-                            refNode = materialNode.child(i)
-                            refNode.setData(0, str(assetType))
-
-                if len(assetRefs["geometry"]) > 0:
-                    node.insertChildren(1, 1, self._rootItem.columnCount())
-                    geometryNode = node.child(1)
-                    if (geometryNode != None):
-                        geometryNode.setData(0, "Geometry")
-                        for i in range(len(assetRefs["geometry"])):
-                            assetType = assetRefs["geometry"][i]
-                            geometryNode.insertChildren(i, 1, self._rootItem.columnCount())
-                            refNode = geometryNode.child(i)
-                            refNode.setData(0, str(assetType))
-
-                if len(assetRefs["modifiers"]) > 0:
-                    node.insertChildren(2, 1, self._rootItem.columnCount())
-                    modifierNode = node.child(2)
-                    if modifierNode != None:
-                        modifierNode.setData(0, "Modifiers")
-                        for i in range(len(assetRefs["modifiers"])):
-                            assetType = assetRefs["modifiers"][i]
-                            modifierNode.insertChildren(i, 1, self._rootItem.columnCount())
-                            refNode = modifierNode.child(i)
-                            refNode.setData(0, str(assetType))
+                refSuperClasses = functions.getSettings()["RefSuperClasses"]
+                for refSuperClass in refSuperClasses:
+                    self.insertRefs(str(refSuperClass), assetRefs, node)

@@ -84,9 +84,9 @@ class AssetListFunctions(object):
 
                 # Return the mapped dictionary of nodes we found
                 return  {
-                            "materials" : materials,
-                            "geometry" : geometry,
-                            "modifiers": modifiers
+                            "Materials" : materials,
+                            "Geometry" : geometry,
+                            "Modifiers": modifiers
                         }
 
         # If we didn't find anything, return an empty dictionary

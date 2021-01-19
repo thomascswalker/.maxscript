@@ -1,4 +1,9 @@
 {
+    "RefSuperClasses" : [
+        "Materials",
+        "Geometry",
+        "Modifiers"
+    ],
     "BitmapClasses" : {
         "BitmapTexture" : "fileName",
         "VRayHDRI" : "HDRIMapName",
