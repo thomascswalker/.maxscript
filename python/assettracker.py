@@ -60,23 +60,33 @@ class AssetTrackerDialog(QMainWindow):
             pass
         self.settings.endGroup()
         
+    # https://wiki.python.org/moin/PyQt/Creating%20a%20context%20menu%20for%20a%20tree%20view
     def openMenu(self, position):
-        indexes = self.ui.treeView.selectedIndexes()
-        if len(indexes) > 0:
-        
+        indices = self.ui.treeView.selectedindices()
+        context = None
+        menu = QMenu()
+
+        print (indices)
+
+        # Loop through the indices
+        if len(indices) > 0:
             level = 0
-            index = indexes[0]
+            index = indices[0]
             while index.parent().isValid():
                 index = index.parent()
                 level += 1
 
-        menu = QMenu()
-        if level == 0:
-            menu.addAction(self.tr("Edit person"))
-        elif level == 1:
-            menu.addAction(self.tr("Edit object/container"))
-        elif level == 2:
-            menu.addAction(self.tr("Edit object"))
+        if level >= 2:
+            # Currently crashes when accessing the internal pointer
+            # item at the index. Wrong index?
+            item = indices[0].internalPointer()
+
+            if item.context()   == "Materials":
+                menu.addAction(self.tr("Open material"))
+            elif item.context() == "Geometry":
+                menu.addAction(self.tr("Select object"))
+            elif item.context() == "Modifiers":
+                menu.addAction(self.tr("Select object"))
 
         menu.exec_(self.ui.treeView.viewport().mapToGlobal(position))
 

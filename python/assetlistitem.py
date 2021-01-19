@@ -10,7 +10,10 @@ class AssetListItem(object):
         self.parentItem = parent
         self.itemData = data
         self.childItems = []
+
+        # Custom data
         self._icon = None
+        self._context = None
 
     def child(self, row):
         if len(self.childItems) >= row:
@@ -90,3 +93,9 @@ class AssetListItem(object):
 
     def icon(self):
         return self._icon
+
+    def setContext(self, context):
+        self._context = context
+
+    def context(self):
+        return self._context

@@ -174,7 +174,7 @@ class AssetListModel(QtCore.QAbstractItemModel):
                     # Set the data of the newly-created node
                     refNode = refParentNode.child(i)
                     refNode.setData(0, str(assetType))
-
+                    refNode.setContext(classType)
 
     def setupModelData(self, parent):
         functions = AssetListFunctions()
