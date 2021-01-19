@@ -1,8 +1,8 @@
 # Standard imports
 import sys, os, imp, PySide2
 
-from PySide2.QtWidgets import QWidget, QDialog, QMainWindow, QVBoxLayout
-from PySide2.QtCore import QFile, QSortFilterProxyModel, QSettings
+from PySide2.QtWidgets import QWidget, QDialog, QMainWindow, QVBoxLayout, QMenu
+from PySide2.QtCore import Qt, QFile, QSortFilterProxyModel, QSettings
 from PySide2.QtUiTools import QUiLoader
 from pymxs import runtime as rt
 
@@ -21,6 +21,7 @@ class AssetTrackerDialog(QMainWindow):
     def __init__(self, parent=QWidget.find(rt.windows.getMAXHWND())):
         QMainWindow.__init__(self, parent)
         
+        # Load UI from .ui file
         loader = QUiLoader()
         ui_file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'assettracker.ui')
         ui_file = QFile(ui_file_path)
@@ -29,6 +30,11 @@ class AssetTrackerDialog(QMainWindow):
         ui_file.close()
         self.setCentralWidget(self.ui)
         
+        # Set events
+        self.ui.treeView.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.ui.treeView.customContextMenuRequested.connect(self.openMenu)
+
+        # Load settings
         self.settings = QSettings("MaxExtended", "BetterAssetTracker")
         self.readSettings()
 
@@ -54,6 +60,26 @@ class AssetTrackerDialog(QMainWindow):
             pass
         self.settings.endGroup()
         
+    def openMenu(self, position):
+        indexes = self.ui.treeView.selectedIndexes()
+        if len(indexes) > 0:
+        
+            level = 0
+            index = indexes[0]
+            while index.parent().isValid():
+                index = index.parent()
+                level += 1
+
+        menu = QMenu()
+        if level == 0:
+            menu.addAction(self.tr("Edit person"))
+        elif level == 1:
+            menu.addAction(self.tr("Edit object/container"))
+        elif level == 2:
+            menu.addAction(self.tr("Edit object"))
+
+        menu.exec_(self.ui.treeView.viewport().mapToGlobal(position))
+
     def closeEvent(self, args):
         print(args)
         self.writeSettings()
