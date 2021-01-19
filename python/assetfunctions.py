@@ -42,7 +42,7 @@ class AssetListFunctions(object):
 
             # Get the respective class' denoted 'filename' parameter
             # These vary a bit per class
-            paramName = data["BitmapClasses"][classKey]
+            paramNames = data["BitmapClasses"][classKey]
 
             # Get the MAXScript Value of the class
             classValue = rt.execute(classKey)
@@ -60,8 +60,12 @@ class AssetListFunctions(object):
                 for inst in instances:
                     # If that node matches the same filename we're currently
                     # checking against, then it's a match!
-                    if (rt.getProperty(inst, paramName)) == filename:
-                        nodes.append(inst)
+                    try:
+                        for param in paramNames:
+                            if (rt.getProperty(inst, param)) == filename:
+                                nodes.append(inst)
+                    except:
+                        pass
 
             # If we've found 1 or more matching nodes, we'll iterate through them
             if len(nodes) > 0:
