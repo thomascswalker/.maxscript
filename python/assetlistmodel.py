@@ -201,8 +201,7 @@ class AssetListModel(QtCore.QAbstractItemModel):
             iconProvider = QFileIconProvider()
             assetIcon = iconProvider.icon(fileInfo)
 
-            # Get the references associated with the asset filename
-            assetRefs = functions.getAssetRefs(assetFilename)
+
 
             # Read the column data from the rest of the line.
             columnData = [assetName, assetExt, assetPath, assetType]
@@ -217,9 +216,12 @@ class AssetListModel(QtCore.QAbstractItemModel):
                 node.setData(column, columnData[column])
                 node.setIcon(assetIcon)
 
-            # Insert three children to the new node for the referenced
-            # materials, geometry, and modifiers
-            if len(assetRefs) > 0:
-                refSuperClasses = functions.getSettings()["RefSuperClasses"]
-                for refSuperClass in refSuperClasses:
-                    self.insertRefs(str(refSuperClass), assetRefs, node)
+            # # Get the references associated with the asset filename
+            # assetRefs = functions.getAssetRefs(assetFilename)
+
+            # # Insert three children to the new node for the referenced
+            # # materials, geometry, and modifiers
+            # if len(assetRefs) > 0:
+            #     refSuperClasses = functions.getSettings()["RefSuperClasses"]
+            #     for refSuperClass in refSuperClasses:
+            #         self.insertRefs(str(refSuperClass), assetRefs, node)

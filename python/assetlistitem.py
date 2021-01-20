@@ -99,3 +99,9 @@ class AssetListItem(object):
 
     def context(self):
         return self._context
+
+    def setCustomData(self, customData):
+        self._customData = customData
+
+    def customData(self):
+        return self._customData
