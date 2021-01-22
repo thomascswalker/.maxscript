@@ -13,9 +13,11 @@ try:
     # Try to reload all modules, if this doesn't work
     # it'll crash
     imp.reload(assetlistmodel)
+    imp.reload(assetfunctions)
 except:
     pass
 from assetlistmodel import AssetListModel
+from assetfunctions import AssetListFunctions
 
 class AssetTrackerDialog(QMainWindow):
     def __init__(self, parent=QWidget.find(rt.windows.getMAXHWND())):
@@ -62,55 +64,8 @@ class AssetTrackerDialog(QMainWindow):
         
     # https://wiki.python.org/moin/PyQt/Creating%20a%20context%20menu%20for%20a%20tree%20view
     def openMenu(self, position):
-        # This is getting the selected indexes of the proxy model attached
-        # to the tree view. This is not to be confused with the source
-        # model, which is the actual AssetListModel.
-        indexes = self.ui.treeView.selectedIndexes()
-        context = None
-
-        if len(indexes) == 0:
-            return
-
-        # Get the actual item(s) selected
-        items = []
-        for proxyIndex in indexes:
-            proxyModel = self.ui.treeView.model()
-            sourceIndex = proxyModel.mapToSource(proxyIndex)
-            sourceModel = proxyModel.sourceModel()
-            item = sourceModel.getItem(sourceIndex)
-
-            items.append(item)
-
-        # Get the depth of the item(s) selected
-        if len(indexes) > 0:
-            depth = 0
-            index = indexes[0]
-            while index.parent().isValid():
-                index = index.parent()
-                depth += 1
-
-        # Create a new menu
-        menu = QMenu()
-
-        # Depending on the depth of the selection, add different actions
-        if depth == 0:
-            print(items)
-            menu.addAction(self.tr("Reveal in explorer..."))
-            menu.addAction(self.tr("Set path..."))
-
-        if depth == 1:
-            menu.addAction(self.tr("Select all children"))
-
-        if depth == 2:
-            if item.context() == "Materials":
-                menu.addAction(self.tr("Open in SME"))
-
-            if item.context() == "Geometry":
-                menu.addAction(self.tr("Select object(s)"))
-
-            if item.context() == "Modifiers":
-                menu.addAction(self.tr("Select parent object(s)"))
-
+        functions = AssetListFunctions()
+        menu = functions.getMenu(self.ui.treeView)
         menu.exec_(self.ui.treeView.viewport().mapToGlobal(position))
 
     def closeEvent(self, args):

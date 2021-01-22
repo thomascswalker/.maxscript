@@ -1,6 +1,8 @@
 from pymxs import runtime as rt
 import json, os
 
+from PySide2.QtWidgets import QMenu
+
 class AssetListFunctions(object):
     _materialClass = rt.execute("material")
     _geometryClass = rt.execute("geometryclass")
@@ -18,6 +20,59 @@ class AssetListFunctions(object):
 
         # Return the dictionary of data
         return data
+
+    def getMenu(self, treeView):
+        model = treeView.model()
+
+        # This is getting the selected indexes of the proxy model attached
+        # to the tree view. This is not to be confused with the source
+        # model, which is the actual AssetListModel.
+        indexes = treeView.selectedIndexes()
+        context = None
+
+        if len(indexes) == 0:
+            return
+
+        # Get the actual item(s) selected
+        items = []
+        for proxyIndex in indexes:
+            proxyModel = model
+            sourceIndex = proxyModel.mapToSource(proxyIndex)
+            sourceModel = proxyModel.sourceModel()
+            item = sourceModel.getItem(sourceIndex)
+
+            items.append(item)
+
+        # Get the depth of the item(s) selected
+        if len(indexes) > 0:
+            depth = 0
+            index = indexes[0]
+            while index.parent().isValid():
+                index = index.parent()
+                depth += 1
+
+        # Create a new menu
+        menu = QMenu()
+
+        # Depending on the depth of the selection, add different actions
+        if depth == 0:
+            menu.addAction("Reveal in explorer...")
+            menu.addAction("Set path...")
+
+        if depth == 1:
+            menu.addAction("Select all children")
+
+        if depth == 2:
+            if item.context() == "Materials":
+                menu.addAction("Open in SME")
+
+            if item.context() == "Geometry":
+                menu.addAction("Select object(s)")
+
+            if item.context() == "Modifiers":
+                menu.addAction("Select parent object(s)")
+
+        return menu
 
     """
     @name: getAssetRefs

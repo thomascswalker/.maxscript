@@ -13,7 +13,8 @@
     },
     "ContextMenus" : {
         "file" : {
-
+            "Reveal in explorer" : "RevealInExplorer",
+            "Set oath..." : "SetFilepath"
         },
         "material" : {
 
