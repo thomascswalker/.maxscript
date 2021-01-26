@@ -8,16 +8,16 @@ from pymxs import runtime as rt
 
 # Local imports
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
-import assetlistmodel
+import AssetTrackerModel
 try:
     # Try to reload all modules, if this doesn't work
     # it'll crash
-    imp.reload(assetlistmodel)
-    imp.reload(assetfunctions)
+    imp.reload(AssetTrackerModel)
+    imp.reload(HelperFunctions)
 except:
     pass
-from assetlistmodel import AssetListModel
-from assetfunctions import AssetListFunctions
+from AssetTrackerModel import Model
+from HelperFunctions import Helpers
 
 class AssetTrackerDialog(QMainWindow):
     def __init__(self, parent=QWidget.find(rt.windows.getMAXHWND())):
@@ -64,7 +64,7 @@ class AssetTrackerDialog(QMainWindow):
         
     # https://wiki.python.org/moin/PyQt/Creating%20a%20context%20menu%20for%20a%20tree%20view
     def openMenu(self, position):
-        functions = AssetListFunctions()
+        functions = Helpers()
         menu = functions.getMenu(self.ui.treeView)
         menu.exec_(self.ui.treeView.viewport().mapToGlobal(position))
 
@@ -87,7 +87,7 @@ def main():
 
     # Create the source model, but map it to a proxy model to enable
     # sorting, filtering, etc.
-    sourceModel = AssetListModel()
+    sourceModel = Model()
     proxyModel = QSortFilterProxyModel()
     proxyModel.setSourceModel(sourceModel)
 

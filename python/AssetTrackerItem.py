@@ -5,7 +5,7 @@ from PySide2.QtGui import QIcon
 from PySide2.QtCore import QFileInfo
 from pymxs import runtime as rt
 
-class AssetListItem(object):
+class Item(object):
     def __init__(self, data, parent=None):
         self.parentItem = parent
         self.itemData = data
@@ -39,7 +39,7 @@ class AssetListItem(object):
 
         for row in range(count):
             data = [None for v in range(columns)]
-            item = AssetListItem(data, self)
+            item = Item(data, self)
             self.childItems.insert(position, item)
 
         return True

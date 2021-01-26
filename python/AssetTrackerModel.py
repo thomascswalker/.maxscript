@@ -7,19 +7,19 @@ from pymxs import runtime as rt
 
 # Local imports
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
-import assetlistitem
-import assetfunctions
+import AssetTrackerItem
+import HelperFunctions
 try:
-    imp.reload(assetlistitem)
-    imp.reload(assetfunctions)
+    imp.reload(AssetTrackerItem)
+    imp.reload(HelperFunctions)
 except:
     pass
-from assetlistitem import AssetListItem
-from assetfunctions import AssetListFunctions
+from AssetTrackerItem import Item
+from HelperFunctions import Helpers
 
-class AssetListModel(QtCore.QAbstractItemModel):
+class Model(QtCore.QAbstractItemModel):
     def __init__(self, parent=None):
-        super(AssetListModel, self).__init__(parent)
+        super(Model, self).__init__(parent)
 
         # Define the visible headers in the main tree view
         headers = ("Name", "Ext", "Path", "Type", "Status")
@@ -27,7 +27,7 @@ class AssetListModel(QtCore.QAbstractItemModel):
 
         # Build the root (invisible) item in the tree view.
         # This will allow the headers to be set and visible.
-        self._rootItem = AssetListItem(self._rootHeaders)
+        self._rootItem = Item(self._rootHeaders)
 
         # Setup the rest of the model data
         self.setupModelData(self._rootItem)
@@ -177,7 +177,7 @@ class AssetListModel(QtCore.QAbstractItemModel):
                     refNode.setContext(classType)
 
     def setupModelData(self, parent):
-        functions = AssetListFunctions()
+        functions = Helpers()
         parents = [parent]
         numAssets = rt.AssetManager.getNumAssets()
 

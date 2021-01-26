@@ -3,19 +3,19 @@ import json, os
 
 from PySide2.QtWidgets import QMenu
 
-class AssetListFunctions(object):
-    _materialClass = rt.execute("material")
-    _geometryClass = rt.execute("geometryclass")
-    _modifierClass = rt.execute("modifier")
+MXS_MATERIAL_CLASS = rt.execute("material")
+MXS_GEOMETRY_CLASS = rt.execute("geometryclass")
+MXS_MODIFIER_CLASS = rt.execute("modifier")
 
-    """
-    @name: getSettings
-    @desc: Gets the settings from the settings .json file.
-    @returns {dictionary}
-    """
+class Helpers(object):
     def getSettings(self):
+        """
+        @name: getSettings
+        @desc: Gets the settings from the settings .json file.
+        @returns {dictionary}
+        """
         # Open the .json file and load the data into a dictionary
-        with open(os.path.dirname(os.path.realpath(__file__)) + "\\assettrackersettings.json") as f:
+        with open(os.path.dirname(os.path.realpath(__file__)) + "\\settings.json") as f:
             data = json.load(f)
 
         # Return the dictionary of data
@@ -74,15 +74,16 @@ class AssetListFunctions(object):
 
         return menu
 
-    """
-    @name: getAssetRefs
-    @desc: Gets all references in the scene, based on the BitmapClasses list
-        from the settings .json file. This returns a dictionary with the
-        materials, geometry, and modifiers associated with the filename.
-    @param {string} filename: The full filename to get all references from
-    @returns {dictionary}
-    """
+
     def getAssetRefs(self, filename):
+        """
+        @name: getAssetRefs
+        @desc: Gets all references in the scene, based on the BitmapClasses list
+            from the settings .json file. This returns a dictionary with the
+            materials, geometry, and modifiers associated with the filename.
+        @param {string} filename: The full filename to get all references from
+        @returns {dictionary}
+        """
         # Get the .json settings first. This'll list all of the classes to
         # iterate through, and what their respective 'filename' parameter
         # is called.
@@ -134,11 +135,11 @@ class AssetListFunctions(object):
                     # Filter through each dependent and add to each respective list
                     # whether it's a subclass of materials, geometry, or modifiers.
                     for dep in deps:
-                        if rt.superClassOf(dep) == self._materialClass:
+                        if rt.superClassOf(dep) == MXS_MATERIAL_CLASS:
                             materials.append(dep)
-                        if rt.superClassOf(dep) == self._geometryClass:
+                        if rt.superClassOf(dep) == MXS_GEOMETRY_CLASS:
                             geometry.append(dep)
-                        if rt.superClassOf(dep) == self._modifierClass:
+                        if rt.superClassOf(dep) == MXS_MODIFIER_CLASS:
                             modifiers.append(dep)
 
                 # Return the mapped dictionary of nodes we found
