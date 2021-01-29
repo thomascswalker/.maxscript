@@ -1,6 +1,7 @@
 # Standard imports
 import os, sys, imp
 from PySide2 import QtGui, QtCore, QtWidgets
+from PySide2.QtGui import QColor
 from PySide2.QtCore import Qt, QSortFilterProxyModel
 from PySide2.QtWidgets import QFileIconProvider
 from pymxs import runtime as rt
@@ -22,7 +23,7 @@ class Model(QtCore.QAbstractItemModel):
         super(Model, self).__init__(parent)
 
         # Define the visible headers in the main tree view
-        headers = ("Name", "Ext", "Path", "Type", "Status")
+        headers = ("Name", "Ext", "Path", "Type", "Status", "Size")
         self._rootHeaders = [header for header in headers]
 
         # Build the root (invisible) item in the tree view.
@@ -38,15 +39,38 @@ class Model(QtCore.QAbstractItemModel):
     def data(self, index, role):
         item = self.getItem(index)
 
+        # If the index is not valid for some reason, return nothing
         if not index.isValid():
             return None
 
+        # Return the filetype icons
         if role == QtCore.Qt.DecorationRole and index.column() == 0:
             return item.icon()
 
+        # Color the foreground text, depending on the file status
+        if role == Qt.BackgroundRole:
+            status = item.data(4) # Index 4 is the found/missing status
+            if (status):
+                return QColor(90,90,90,255)
+            else:
+                return QColor(255,50,50,128)
+
+        # Ignore non-display and non-edit roles
         if role != QtCore.Qt.DisplayRole and role != QtCore.Qt.EditRole:
             return None
 
+
+        # For the item status, style the return as:
+        # True = Found
+        # False = Missing
+        if (index.column() == 4):
+            status = item.data(index.column())
+            if (status):
+                return "Found"
+            else:
+                return "Missing"
+
+        # For all other cell data
         return item.data(index.column())
 
     def flags(self, index):
@@ -144,7 +168,10 @@ class Model(QtCore.QAbstractItemModel):
 
         return result
 
-    def insertRefs(self, classType, assetRefs, node):
+    def insertRefs(self,
+                   classType,
+                   assetRefs,
+                   node):
         # Check to make sure the number of refs is greater than 0
         if len(assetRefs[classType]) > 0:
 
@@ -174,7 +201,7 @@ class Model(QtCore.QAbstractItemModel):
                     # Set the data of the newly-created node
                     refNode = refParentNode.child(i)
                     refNode.setData(0, str(assetType))
-                    refNode.setContext(classType)
+                    refNode.setClassType(classType)
 
     def setupModelData(self, parent):
         functions = Helpers()
@@ -193,7 +220,15 @@ class Model(QtCore.QAbstractItemModel):
             assetName     = os.path.splitext(assetBasename)[0]
             assetPath     = os.path.dirname(assetFilename)
             assetExt      = os.path.splitext(assetBasename)[1]
+            if assetExt == "":
+                continue
             assetType     = str(asset.GetType())
+            assetStatus   = os.path.exists(assetFilename)
+            if (assetStatus):
+                size = os.path.getsize(assetFilename)
+                assetSize = functions.getFileSize(size)
+            else:
+                assetSize = 0
 
             # We'll use QFileIconProvider to grab the icon that the OS
             # is currently using to grab the icon to display in the view
@@ -202,9 +237,14 @@ class Model(QtCore.QAbstractItemModel):
             assetIcon = iconProvider.icon(fileInfo)
 
             # Read the column data from the rest of the line.
-            columnData = [assetName, assetExt, assetPath, assetType]
+            columnData = [assetName,
+                          assetExt,
+                          assetPath,
+                          assetType,
+                          os.path.exists(assetFilename),
+                          assetSize]
 
-            # Append a new item to the current parent's list of children.
+            # Append a new node to the root
             parent = parents[-1]
             parent.insertChildren(parent.childCount(), 1, self._rootItem.columnCount())
             node = parent.child(parent.childCount() - 1)
@@ -215,11 +255,11 @@ class Model(QtCore.QAbstractItemModel):
                 node.setIcon(assetIcon)
 
             # Get the references associated with the asset filename
-            assetRefs = functions.getAssetRefs(assetFilename)
+            # assetRefs = functions.getAssetRefs(assetFilename)
 
             # Insert three children to the new node for the referenced
             # materials, geometry, and modifiers
-            if len(assetRefs) > 0:
-                refSuperClasses = functions.getSettings()["RefSuperClasses"]
-                for refSuperClass in refSuperClasses:
-                    self.insertRefs(str(refSuperClass), assetRefs, node)
+            # if len(assetRefs) > 0:
+            #     refSuperClasses = functions.getSettings()["RefSuperClasses"]
+            #     for refSuperClass in refSuperClasses:
+            #         self.insertRefs(str(refSuperClass), assetRefs, node)

@@ -1,5 +1,6 @@
 from pymxs import runtime as rt
 import json, os
+from collections import OrderedDict
 
 from PySide2.QtWidgets import QMenu
 
@@ -16,7 +17,7 @@ class Helpers(object):
         """
         # Open the .json file and load the data into a dictionary
         with open(os.path.dirname(os.path.realpath(__file__)) + "\\settings.json") as f:
-            data = json.load(f)
+            data = json.load(f, object_pairs_hook=OrderedDict)
 
         # Return the dictionary of data
         return data
@@ -53,11 +54,15 @@ class Helpers(object):
 
         # Create a new menu
         menu = QMenu()
+        data = self.getSettings()
 
         # Depending on the depth of the selection, add different actions
         if depth == 0:
-            menu.addAction("Reveal in explorer...")
-            menu.addAction("Set path...")
+            for action in data["ContextMenus"]["File"]:
+                if (action == "-"):
+                    menu.addSeparator()
+                else:
+                    menu.addAction(action)
 
         if depth == 1:
             menu.addAction("Select all children")
@@ -73,7 +78,6 @@ class Helpers(object):
                 menu.addAction("Select parent object(s)")
 
         return menu
-
 
     def getAssetRefs(self, filename):
         """
@@ -151,3 +155,16 @@ class Helpers(object):
 
         # If we didn't find anything, return an empty dictionary
         return {}
+
+    def getFileSize(self, size):
+        if size < 1024.0: # B
+            return (str(size) + "B")
+        elif size < 1048576: # KB
+            size = size / 1024.0
+            return (str(round(size, 2)) + "KB")
+        elif size < 1073741824: # MB
+            size = size / (1024.0 * 1024.0)
+            return (str(round(size, 2)) + "MB")
+        else: # GB
+            size = size / (1024.0 * 1024.0 * 1024.0)
+            return (str(round(size, 2)) + "GB")

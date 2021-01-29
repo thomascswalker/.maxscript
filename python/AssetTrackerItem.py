@@ -13,7 +13,7 @@ class Item(object):
 
         # Custom data
         self._icon = None
-        self._context = None
+        self._classType = ""
 
     def child(self, row):
         if len(self.childItems) >= row:
@@ -32,6 +32,9 @@ class Item(object):
 
     def data(self, column):
         return self.itemData[column]
+
+    def itemData(self):
+        return self.itemData
 
     def insertChildren(self, position, count, columns):
         if position < 0 or position > len(self.childItems):
@@ -94,14 +97,8 @@ class Item(object):
     def icon(self):
         return self._icon
 
-    def setContext(self, context):
-        self._context = context
+    def setClassType(self, classType):
+        self._classType = classType
 
-    def context(self):
-        return self._context
-
-    def setCustomData(self, customData):
-        self._customData = customData
-
-    def customData(self):
-        return self._customData
+    def classType(self):
+        return self._classType

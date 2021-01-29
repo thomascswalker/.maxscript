@@ -12,17 +12,19 @@
 		"OSLMap" : ["Filename"]
     },
     "ContextMenus" : {
-        "file" : {
+        "File" : {
             "Reveal in explorer" : "RevealInExplorer",
-            "Set oath..." : "SetFilepath"
+            "-": "",
+            "Set path..." : "SetFilepath",
+            "Rename file..." : "RenameFile"
         },
-        "material" : {
+        "Material" : {
 
         },
-        "geometry" : {
+        "Geometry" : {
 
         },
-        "modifier" : {
+        "Modifier" : {
 
         }
     }
