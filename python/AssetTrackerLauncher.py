@@ -66,7 +66,8 @@ class AssetTrackerDialog(QMainWindow):
     def openMenu(self, position):
         functions = Helpers()
         menu = functions.getMenu(self.ui.treeView)
-        menu.exec_(self.ui.treeView.viewport().mapToGlobal(position))
+        if (menu):
+            menu.exec_(self.ui.treeView.viewport().mapToGlobal(position))
 
     def closeEvent(self, args):
         print(args)

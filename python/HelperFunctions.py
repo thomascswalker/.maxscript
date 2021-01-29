@@ -2,7 +2,7 @@ from pymxs import runtime as rt
 import json, os
 from collections import OrderedDict
 
-from PySide2.QtWidgets import QMenu
+from PySide2.QtWidgets import QMenu, QAction
 
 MXS_MATERIAL_CLASS = rt.execute("material")
 MXS_GEOMETRY_CLASS = rt.execute("geometryclass")
@@ -21,6 +21,18 @@ class Helpers(object):
 
         # Return the dictionary of data
         return data
+
+    def RevealInExplorer(self, items):
+        print("Reveal in explorer")
+        print (items)
+    
+    def SetFilepath(self, items):
+        print("Set filepath")
+        print (items)
+
+    def RenameFile(self, items):
+        print("Rename file")
+        print (items)
 
     def getMenu(self, treeView):
         model = treeView.model()
@@ -58,11 +70,17 @@ class Helpers(object):
 
         # Depending on the depth of the selection, add different actions
         if depth == 0:
-            for action in data["ContextMenus"]["File"]:
-                if (action == "-"):
+            for menuItem in data["ContextMenus"]["File"]:
+                if (menuItem == "-"):
                     menu.addSeparator()
                 else:
-                    menu.addAction(action)
+                    print(menuItem)
+                    action = data["ContextMenus"]["File"][menuItem]
+                    print(action)
+                    method = getattr(self, action)
+                    print(method)
+                    menu.addAction(action, lambda:method(items))
+                    
 
         if depth == 1:
             menu.addAction("Select all children")
