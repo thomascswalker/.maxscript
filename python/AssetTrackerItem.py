@@ -33,9 +33,6 @@ class Item(object):
     def data(self, column):
         return self.itemData[column]
 
-    def itemData(self):
-        return self.itemData
-
     def insertChildren(self, position, count, columns):
         if position < 0 or position > len(self.childItems):
             return False

@@ -1,5 +1,5 @@
 from pymxs import runtime as rt
-import json, os
+import json, os, subprocess
 from collections import OrderedDict
 
 from PySide2.QtWidgets import QMenu, QAction
@@ -24,7 +24,9 @@ class Helpers(object):
 
     def RevealInExplorer(self, items):
         print("Reveal in explorer")
-        print (items)
+        data = items[0].itemData
+        filepath = data[2]
+        os.startfile(filepath)
     
     def SetFilepath(self, items):
         print("Set filepath")
@@ -74,12 +76,9 @@ class Helpers(object):
                 if (menuItem == "-"):
                     menu.addSeparator()
                 else:
-                    print(menuItem)
                     action = data["ContextMenus"]["File"][menuItem]
-                    print(action)
                     method = getattr(self, action)
-                    print(method)
-                    menu.addAction(action, lambda:method(items))
+                    menu.addAction(menuItem, lambda method=method:method(items))
                     
 
         if depth == 1:
