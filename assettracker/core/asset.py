@@ -5,9 +5,9 @@ from PySide2.QtGui import QIcon
 from PySide2.QtCore import QFileInfo
 from pymxs import runtime as rt
 
-class Item(object):
+class Asset(object):
     def __init__(self, data, parent=None):
-        self.parentItem = parent
+        self.parentAsset = parent
         self.itemData = data
         self.childItems = []
 
@@ -23,8 +23,8 @@ class Item(object):
         return len(self.childItems)
 
     def childNumber(self):
-        if self.parentItem != None:
-            return self.parentItem.childItems.index(self)
+        if self.parentAsset != None:
+            return self.parentAsset.childItems.index(self)
         return 0
 
     def columnCount(self):
@@ -39,8 +39,8 @@ class Item(object):
 
         for row in range(count):
             data = [None for v in range(columns)]
-            item = Item(data, self)
-            self.childItems.insert(position, item)
+            asset = Asset(data, self)
+            self.childItems.insert(position, asset)
 
         return True
 
@@ -57,7 +57,7 @@ class Item(object):
         return True
 
     def parent(self):
-        return self.parentItem
+        return self.parentAsset
 
     def removeChildren(self, position, count):
         if position < 0 or position + count > len(self.childItems):

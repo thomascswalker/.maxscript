@@ -6,18 +6,9 @@ from PySide2.QtCore import Qt, QSortFilterProxyModel, QObject, Signal, Slot
 from PySide2.QtWidgets import QFileIconProvider
 from pymxs import runtime as rt
 
-# Local imports
-sys.path.append(os.path.dirname(os.path.realpath(__file__)))
-import AssetTrackerItem
-import HelperFunctions
-try:
-    imp.reload(AssetTrackerItem)
-    imp.reload(HelperFunctions)
-except:
-    pass
-from AssetTrackerItem import Item
-from HelperFunctions import Helpers
-
+# Asset Tracker imports
+from asset import *
+from helpers.helpers import *
 
 class Model(QtCore.QAbstractItemModel):
     def __init__(self, parent=None):
@@ -29,11 +20,10 @@ class Model(QtCore.QAbstractItemModel):
 
         # Build the root (invisible) item in the tree view.
         # This will allow the headers to be set and visible.
-        self._rootItem = Item(self._rootHeaders)
+        self._rootItem = Asset(self._rootHeaders)
 
         # Setup the rest of the model data
         self.setupModelData(self._rootItem)
-        self.functions = Helpers()
 
     def columnCount(self, parent=QtCore.QModelIndex()):
         return self._rootItem.columnCount()
@@ -75,7 +65,7 @@ class Model(QtCore.QAbstractItemModel):
         # the B/KB/MB/GB size.
         if (index.column() == 5):
             size = item.data(5)
-            assetSize = self.functions.getFileSize(size)
+            assetSize = getFileSize(size)
             return assetSize
 
         # For all other cell data
@@ -261,11 +251,11 @@ class Model(QtCore.QAbstractItemModel):
                 node.setIcon(assetIcon)
 
             # Get the references associated with the asset filename
-            # assetRefs = self.functions.getAssetRefs(assetFilename)
+            # assetRefs = getAssetRefs(assetFilename)
 
             # Insert three children to the new node for the referenced
             # materials, geometry, and modifiers
             # if len(assetRefs) > 0:
-            #     refSuperClasses = self.functions.getSettings()["RefSuperClasses"]
+            #     refSuperClasses = getSettings()["RefSuperClasses"]
             #     for refSuperClass in refSuperClasses:
             #         self.insertRefs(str(refSuperClass), assetRefs, node)
