@@ -6,18 +6,12 @@ from PySide2.QtCore import Qt, QFile, QSortFilterProxyModel, QSettings
 from PySide2.QtUiTools import QUiLoader
 from pymxs import runtime as rt
 
-# Local imports
-sys.path.append(os.path.dirname(os.path.realpath(__file__)))
-import AssetTrackerModel
-try:
-    # Try to reload all modules, if this doesn't work
-    # it'll crash
-    imp.reload(AssetTrackerModel)
-    imp.reload(HelperFunctions)
-except:
-    pass
-from AssetTrackerModel import Model
-from HelperFunctions import Helpers
+# Asset Tracker imports
+ROOT_DIR = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(ROOT_DIR)
+
+from core.model import *
+from helpers.helpers import *
 
 class AssetTrackerDialog(QMainWindow):
     def __init__(self, parent=QWidget.find(rt.windows.getMAXHWND())):
@@ -25,7 +19,8 @@ class AssetTrackerDialog(QMainWindow):
         
         # Load UI from .ui file
         loader = QUiLoader()
-        ui_file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'assettracker.ui')
+        ui_file_path = os.path.join(ROOT_DIR, 'ui\\mainwindow.ui')
+        print(ui_file_path)
         ui_file = QFile(ui_file_path)
         ui_file.open(QFile.ReadOnly)
         self.ui = loader.load(ui_file, self)
@@ -64,8 +59,7 @@ class AssetTrackerDialog(QMainWindow):
         
     # https://wiki.python.org/moin/PyQt/Creating%20a%20context%20menu%20for%20a%20tree%20view
     def openMenu(self, position):
-        functions = Helpers()
-        menu = functions.getMenu(self.ui.treeView)
+        menu = getMenu(self.ui.treeView)
         if (menu):
             menu.exec_(self.ui.treeView.viewport().mapToGlobal(position))
 
