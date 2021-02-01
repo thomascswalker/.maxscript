@@ -2,7 +2,7 @@
 import os, sys, imp
 from PySide2 import QtGui, QtCore, QtWidgets
 from PySide2.QtGui import QColor
-from PySide2.QtCore import Qt, QSortFilterProxyModel
+from PySide2.QtCore import Qt, QSortFilterProxyModel, QObject, Signal, Slot
 from PySide2.QtWidgets import QFileIconProvider
 from pymxs import runtime as rt
 
@@ -17,6 +17,7 @@ except:
     pass
 from AssetTrackerItem import Item
 from HelperFunctions import Helpers
+
 
 class Model(QtCore.QAbstractItemModel):
     def __init__(self, parent=None):
