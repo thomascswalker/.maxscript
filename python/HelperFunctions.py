@@ -23,7 +23,7 @@ class Helpers(object):
         @returns {dictionary}
         """
         # Open the .json file and load the data into a dictionary
-        with open(os.path.dirname(os.path.realpath(__file__)) + "\\settings.json") as f:
+        with open(os.path.dirname(os.path.realpath(__file__)) + "settings\\default.json") as f:
             data = json.load(f, object_pairs_hook=OrderedDict)
 
         # Return the dictionary of data
