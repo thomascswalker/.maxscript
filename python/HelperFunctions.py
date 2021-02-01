@@ -8,6 +8,13 @@ MXS_MATERIAL_CLASS = rt.execute("material")
 MXS_GEOMETRY_CLASS = rt.execute("geometryclass")
 MXS_MODIFIER_CLASS = rt.execute("modifier")
 
+ITEM_NAME = 1
+ITEM_EXT = 2
+ITEM_PATH = 3
+ITEM_TYPE = 4
+ITEM_STATUS = 5
+ITEM_SIZE = 6
+
 class Helpers(object):
     def getSettings(self):
         """
@@ -23,10 +30,16 @@ class Helpers(object):
         return data
 
     def RevealInExplorer(self, items):
-        print("Reveal in explorer")
-        data = items[0].itemData
-        filepath = data[2]
-        os.startfile(filepath)
+        allPaths = []
+        for item in items:
+            data = item.itemData
+            filepath = data[ITEM_EXT]
+            allPaths.append(filepath)
+
+        allPaths = set(allPaths)
+        for path in allPaths:
+            print(path)
+            os.startfile(path)
     
     def SetFilepath(self, items):
         print("Set filepath")
@@ -50,7 +63,12 @@ class Helpers(object):
 
         # Get the actual item(s) selected
         items = []
-        for proxyIndex in indexes:
+        columns = model.columnCount()
+
+        # Loop through the selected items, but only get one per group of items (rows).
+        # The indexes selected includes each cell, but we only care for the row
+        # that's selected.
+        for proxyIndex in indexes[::columns]:
             proxyModel = model
             sourceIndex = proxyModel.mapToSource(proxyIndex)
             sourceModel = proxyModel.sourceModel()

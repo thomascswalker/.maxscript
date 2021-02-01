@@ -32,6 +32,7 @@ class Model(QtCore.QAbstractItemModel):
 
         # Setup the rest of the model data
         self.setupModelData(self._rootItem)
+        self.functions = Helpers()
 
     def columnCount(self, parent=QtCore.QModelIndex()):
         return self._rootItem.columnCount()
@@ -59,16 +60,22 @@ class Model(QtCore.QAbstractItemModel):
         if role != QtCore.Qt.DisplayRole and role != QtCore.Qt.EditRole:
             return None
 
-
         # For the item status, style the return as:
         # True = Found
         # False = Missing
         if (index.column() == 4):
-            status = item.data(index.column())
+            status = item.data(4)
             if (status):
                 return "Found"
             else:
                 return "Missing"
+
+        # For the file size, style the return with
+        # the B/KB/MB/GB size.
+        if (index.column() == 5):
+            size = item.data(5)
+            assetSize = self.functions.getFileSize(size)
+            return assetSize
 
         # For all other cell data
         return item.data(index.column())
@@ -204,7 +211,6 @@ class Model(QtCore.QAbstractItemModel):
                     refNode.setClassType(classType)
 
     def setupModelData(self, parent):
-        functions = Helpers()
         parents = [parent]
         numAssets = rt.AssetManager.getNumAssets()
 
@@ -225,8 +231,7 @@ class Model(QtCore.QAbstractItemModel):
             assetType     = str(asset.GetType())
             assetStatus   = os.path.exists(assetFilename)
             if (assetStatus):
-                size = os.path.getsize(assetFilename)
-                assetSize = functions.getFileSize(size)
+                assetSize = os.path.getsize(assetFilename)
             else:
                 assetSize = 0
 
@@ -255,11 +260,11 @@ class Model(QtCore.QAbstractItemModel):
                 node.setIcon(assetIcon)
 
             # Get the references associated with the asset filename
-            # assetRefs = functions.getAssetRefs(assetFilename)
+            # assetRefs = self.functions.getAssetRefs(assetFilename)
 
             # Insert three children to the new node for the referenced
             # materials, geometry, and modifiers
             # if len(assetRefs) > 0:
-            #     refSuperClasses = functions.getSettings()["RefSuperClasses"]
+            #     refSuperClasses = self.functions.getSettings()["RefSuperClasses"]
             #     for refSuperClass in refSuperClasses:
             #         self.insertRefs(str(refSuperClass), assetRefs, node)
