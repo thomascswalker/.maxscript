@@ -1,5 +1,5 @@
 # Standard imports
-import sys, os, imp, PySide2
+import sys, os, PySide2
 
 from PySide2.QtWidgets import QWidget, QDialog, QMainWindow, QVBoxLayout, QMenu
 from PySide2.QtCore import Qt, QFile, QSortFilterProxyModel, QSettings
@@ -10,6 +10,14 @@ from pymxs import runtime as rt
 ROOT_DIR = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(ROOT_DIR)
 
+# Import all folders (modules)
+from core import *
+from helpers import *
+reload(model)
+reload(asset)
+reload(helpers)
+
+# Reimport all classes
 from core.model import *
 from helpers.helpers import *
 
@@ -20,7 +28,6 @@ class AssetTrackerDialog(QMainWindow):
         # Load UI from .ui file
         loader = QUiLoader()
         ui_file_path = os.path.join(ROOT_DIR, 'ui\\mainwindow.ui')
-        print(ui_file_path)
         ui_file = QFile(ui_file_path)
         ui_file.open(QFile.ReadOnly)
         self.ui = loader.load(ui_file, self)
