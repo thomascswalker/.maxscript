@@ -1,3 +1,7 @@
+"""!@package Helper Functions
+Helper functions related to actions.
+"""
+
 from pymxs import runtime as rt
 import json, os, subprocess
 from collections import OrderedDict
@@ -8,7 +12,14 @@ import constants
 reload(constants)
 
 class Actions(object):
+    """!
+    The primary class used to store actions related to context menus
+    as well as the top menubar of the main window.
+    """
     def RevealInExplorer(self, items):
+        """!
+        @param items The asset items which are selected.
+        """
         allPaths = []
         for item in items:
             data = item.itemData
@@ -28,10 +39,9 @@ class Actions(object):
         print (items)
 
 def getSettings():
-    """
-    @name: getSettings
-    @desc: Gets the settings from the settings .json file.
-    @returns {dictionary}
+    """!
+    Gets the settings from the settings .json file.
+    @return {dictionary}
     """
     # Open the .json file and load the data into a dictionary
     with open(constants.ROOT_DIR + "\\settings\\default.json") as f:
@@ -41,6 +51,13 @@ def getSettings():
     return data
 
 def getMenu(treeView):
+    """!
+    Gets the context menu for the assets in the tree view which
+    were right-clicked, therefore requesting the context menu.
+    @param {QTreeView} treeView: The tree view to extract the selected
+                                 indexes from.
+    @return {QMenu}
+    """
     model = treeView.model()
     actions = Actions()
 
@@ -108,12 +125,11 @@ def getMenu(treeView):
 
 def getAssetRefs(filename):
     """
-    @name: getAssetRefs
-    @desc: Gets all references in the scene, based on the BitmapClasses list
-        from the settings .json file. This returns a dictionary with the
-        materials, geometry, and modifiers associated with the filename.
-    @param {string} filename: The full filename to get all references from
-    @returns {dictionary}
+    Gets all references in the scene, based on the BitmapClasses list
+    from the settings .json file. This returns a dictionary with the
+    materials, geometry, and modifiers associated with the filename.
+    @param {str} filename: The full filename to get all references from
+    @return {dictionary}
     """
     # Get the .json settings first. This'll list all of the classes to
     # iterate through, and what their respective 'filename' parameter
@@ -184,6 +200,12 @@ def getAssetRefs(filename):
     return {}
 
 def getFileSize(size):
+    """
+    Returns the human-readable size of a file from its
+    number of bytes.
+    @param {int} size: The file size in bytes.
+    @return {str}
+    """
     if size < 1024.0: # B
         return (str(size) + "B")
     elif size < 1048576: # KB
