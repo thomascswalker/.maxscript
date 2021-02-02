@@ -4,30 +4,19 @@ from collections import OrderedDict
 
 from PySide2.QtWidgets import QMenu, QAction
 
-import config
-
-MXS_MATERIAL_CLASS = rt.execute("material")
-MXS_GEOMETRY_CLASS = rt.execute("geometryclass")
-MXS_MODIFIER_CLASS = rt.execute("modifier")
-
-ITEM_NAME = 1
-ITEM_EXT = 2
-ITEM_PATH = 3
-ITEM_TYPE = 4
-ITEM_STATUS = 5
-ITEM_SIZE = 6
+import constants
+reload(constants)
 
 class Actions(object):
     def RevealInExplorer(self, items):
         allPaths = []
         for item in items:
             data = item.itemData
-            filepath = data[ITEM_EXT]
+            filepath = data[constants.ITEM_EXT]
             allPaths.append(filepath)
 
         allPaths = set(allPaths)
         for path in allPaths:
-            print(path)
             os.startfile(path)
 
     def SetFilepath(self, items):
@@ -45,7 +34,7 @@ def getSettings():
     @returns {dictionary}
     """
     # Open the .json file and load the data into a dictionary
-    with open(config.ROOT_DIR + "\\settings\\default.json") as f:
+    with open(constants.ROOT_DIR + "\\settings\\default.json") as f:
         data = json.load(f, object_pairs_hook=OrderedDict)
 
     # Return the dictionary of data
@@ -177,11 +166,11 @@ def getAssetRefs(filename):
                 # Filter through each dependent and add to each respective list
                 # whether it's a subclass of materials, geometry, or modifiers.
                 for dep in deps:
-                    if rt.superClassOf(dep) == MXS_MATERIAL_CLASS:
+                    if rt.superClassOf(dep) == constants.MXS_MATERIAL_CLASS:
                         materials.append(dep)
-                    if rt.superClassOf(dep) == MXS_GEOMETRY_CLASS:
+                    if rt.superClassOf(dep) == constants.MXS_GEOMETRY_CLASS:
                         geometry.append(dep)
-                    if rt.superClassOf(dep) == MXS_MODIFIER_CLASS:
+                    if rt.superClassOf(dep) == constants.MXS_MODIFIER_CLASS:
                         modifiers.append(dep)
 
             # Return the mapped dictionary of nodes we found
