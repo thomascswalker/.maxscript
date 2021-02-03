@@ -10,6 +10,7 @@ from PySide2.QtWidgets import QMenu, QAction
 
 import constants
 reload(constants)
+from constants import *
 
 class Actions(object):
     """!
@@ -23,7 +24,7 @@ class Actions(object):
         allPaths = []
         for item in items:
             data = item.itemData
-            filepath = data[constants.ITEM_EXT]
+            filepath = data[ITEM_EXT]
             allPaths.append(filepath)
 
         allPaths = set(allPaths)
@@ -182,11 +183,11 @@ def getAssetRefs(filename):
                 # Filter through each dependent and add to each respective list
                 # whether it's a subclass of materials, geometry, or modifiers.
                 for dep in deps:
-                    if rt.superClassOf(dep) == constants.MXS_MATERIAL_CLASS:
+                    if rt.superClassOf(dep) == MXS_MATERIAL_CLASS:
                         materials.append(dep)
-                    if rt.superClassOf(dep) == constants.MXS_GEOMETRY_CLASS:
+                    if rt.superClassOf(dep) == MXS_GEOMETRY_CLASS:
                         geometry.append(dep)
-                    if rt.superClassOf(dep) == constants.MXS_MODIFIER_CLASS:
+                    if rt.superClassOf(dep) == MXS_MODIFIER_CLASS:
                         modifiers.append(dep)
 
             # Return the mapped dictionary of nodes we found

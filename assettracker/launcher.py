@@ -6,18 +6,20 @@ from PySide2.QtCore import Qt, QFile, QSortFilterProxyModel, QSettings
 from PySide2.QtUiTools import QUiLoader
 from pymxs import runtime as rt
 
-# Asset Tracker imports
+# Need to do this to establish the current directory
 ROOT_DIR = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(ROOT_DIR)
 
-# Import all folders (modules)
-from core import *
-from helpers import *
+# Asset Tracker imports
+import constants
+reload(constants)
+from core import model
 reload(model)
-reload(asset)
+from helpers import helpers
 reload(helpers)
 
 # Reimport all classes
+from constants import *
 from core.model import *
 from helpers.helpers import *
 
@@ -89,7 +91,7 @@ def main():
 
     # Create the source model, but map it to a proxy model to enable
     # sorting, filtering, etc.
-    sourceModel = Model()
+    sourceModel = model.Model()
     proxyModel = QSortFilterProxyModel()
     proxyModel.setSourceModel(sourceModel)
 

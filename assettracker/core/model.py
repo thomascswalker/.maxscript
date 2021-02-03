@@ -6,8 +6,14 @@ from PySide2.QtCore import Qt, QSortFilterProxyModel, QObject, Signal, Slot
 from PySide2.QtWidgets import QFileIconProvider
 from pymxs import runtime as rt
 
-# Asset Tracker imports
-from asset import *
+# Asset Tracker imports/reloads
+import asset
+reload(asset)
+from helpers import helpers
+reload(helpers)
+
+# Import each class/function
+from core.asset import *
 from helpers.helpers import *
 
 class Model(QtCore.QAbstractItemModel):
@@ -20,7 +26,7 @@ class Model(QtCore.QAbstractItemModel):
 
         # Build the root (invisible) item in the tree view.
         # This will allow the headers to be set and visible.
-        self._rootItem = Asset(self._rootHeaders)
+        self._rootItem = asset.Asset(self._rootHeaders)
 
         # Setup the rest of the model data
         self.setupModelData(self._rootItem)
