@@ -1,8 +1,9 @@
 # Python in 3ds Max: Imports
 
+## Importing modules
 Imports in Python through 3ds Max are kind of weird. The easiest way to maintain imports is to utilize the `__init__.py` file to initialize adding the root package directory to the system path list.
 
-## Example
+### Example
 Assuming our package has a hierarchy like the below:
 ```
 root/
