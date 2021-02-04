@@ -13,6 +13,12 @@ root/
         some_file.py
 ```
 
+`some_file.py` has some functions in it that we want to use.
+```Python
+def testFunction:
+    print("It worked!")
+```
+
 In the root init file, we can add:
 
 ```Python
@@ -26,4 +32,10 @@ Then, in `main.py`, you can simply do a relative import based on the root direct
 ```Python
 # main
 from functions import some_file
+some_file.testFunction()
+
+# or
+
+from some_file import testFunction
+testFunction()
 ```
